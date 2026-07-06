@@ -1,0 +1,14 @@
+.DS_Store
+.env*
+!.env.example
+.next
+.vercel
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data, keep out of git because it can contain orders, behavior logs, or PII.
+data/analytics-events.json
+data/action-logs.json
+data/orders.json

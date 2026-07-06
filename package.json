@@ -1,0 +1,19 @@
+{
+  "name": "indonesia-landing-page-factory",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "local": "bash scripts/start-local.sh",
+    "build": "next build",
+    "start": "next start",
+    "migrate:postgres": "node scripts/migrate-json-to-postgres.mjs",
+    "assets:clean-filenames": "node scripts/clean-asset-filenames.mjs"
+  },
+  "dependencies": {
+    "next": "latest",
+    "pg": "^8.22.0",
+    "react": "latest",
+    "react-dom": "latest"
+  }
+}

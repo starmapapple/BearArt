@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_DIR="/Users/pogofm/Documents/Codex/2026-07-02/new-chat"
+PORT="3000"
+URL="http://localhost:${PORT}/p/colorbear-art"
+LOG_FILE="/tmp/beart-art-shop-local.log"
+
+cd "$PROJECT_DIR"
+
+notify() {
+  /usr/bin/osascript -e "display notification \"$1\" with title \"Beart Art Shop\"" >/dev/null 2>&1 || true
+}
+
+is_running() {
+  /usr/sbin/lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1
+}
+
+if ! is_running; then
+  if [ ! -d "node_modules" ]; then
+    notify "正在安装依赖，请稍等"
+    /bin/zsh -lc "cd '$PROJECT_DIR' && npm install" >>"$LOG_FILE" 2>&1
+  fi
+
+  notify "正在启动本地网站"
+  nohup /bin/zsh -lc "cd '$PROJECT_DIR' && npm run dev -- --hostname 127.0.0.1 --port '$PORT'" >>"$LOG_FILE" 2>&1 &
+
+  for _ in {1..30}; do
+    if is_running; then
+      break
+    fi
+    sleep 1
+  done
+fi
+
+/usr/bin/open "$URL"
+notify "网站已打开"
