@@ -7,7 +7,7 @@
 1. Vercel：部署网站。
 2. GoDaddy：你已经买好 `grupbeli.com`，用于改 DNS。
 3. Neon 或 Supabase：创建 PostgreSQL 数据库。
-4. Xendit 或 Midtrans：后续接 Virtual Account 支付。
+4. Xendit 或 Midtrans：后续接 Virtual Account 支付，第一期 COD-only 暂时不需要。
 
 ## 第一步：先建数据库
 
@@ -41,7 +41,7 @@ ADMIN_SESSION_SECRET=自己设置一个很长的随机字符串
 
 DATABASE_URL=你的PostgreSQL连接串
 
-PAYMENT_PROVIDER=mock_gateway
+PAYMENT_PROVIDER=cod_only
 PAYMENT_WEBHOOK_SECRET=先设置一个随机字符串
 ```
 
@@ -118,7 +118,7 @@ https://grupbeli.com/admin/login
 1. 手机打开页面速度正常。
 2. 首屏图片正常显示。
 3. 点击 `Langsung COD` 可以打开购买弹窗。
-4. COD 下单能成功。
+4. COD 下单能成功，购买弹窗只展示 COD。
 5. 后台订单能看到新订单。
 6. `/admin/analytics` 能看到访问和下单事件。
 7. WhatsApp 客服按钮能打开。
@@ -150,6 +150,6 @@ NEXT_PUBLIC_ASSET_BASE_URL=https://cdn.grupbeli.com
 
 ## 当前策略
 
-第一版：Vercel 全包，最快上线验证。
+第一版：Vercel 全包 + COD-only，最快上线验证。
 
-放量前：图片切 Bunny，视频用 YouTube 弹窗播放，降低 Vercel 带宽成本。
+放量前：图片切 Bunny，视频用 YouTube 弹窗播放；需要 Virtual Account 时再接 Xendit/Midtrans。

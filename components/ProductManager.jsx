@@ -23,7 +23,7 @@ const emptyProduct = {
   faqs: "",
   ctaText: "立即购买",
   codEnabled: true,
-  paymentMethods: "virtual_account\ncod",
+  paymentMethods: "cod",
   metaPixelId: "",
   tiktokPixelId: "",
   googleAdsId: ""

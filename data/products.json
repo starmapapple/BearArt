@@ -79,7 +79,6 @@
     "ctaText": "Langsung COD",
     "codEnabled": true,
     "paymentMethods": [
-      "virtual_account",
       "cod"
     ],
     "pixels": {
@@ -137,7 +136,6 @@
     "ctaText": "立即购买",
     "codEnabled": true,
     "paymentMethods": [
-      "virtual_account",
       "cod"
     ],
     "pixels": {

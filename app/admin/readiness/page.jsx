@@ -23,7 +23,7 @@ export default function ReadinessPage() {
         </div>
         <div className="card">
           <p className="muted">支付模式</p>
-          <h3>{process.env.PAYMENT_PROVIDER || "mock_gateway"}</h3>
+          <h3>{process.env.PAYMENT_PROVIDER || "cod_only"}</h3>
         </div>
       </section>
 
