@@ -289,6 +289,69 @@ textarea {
   justify-content: center;
 }
 
+.admin-deploy-control {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  position: relative;
+}
+
+.admin-deploy-button {
+  align-items: center;
+  background: #0c8b63;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 900;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.admin-deploy-button:hover {
+  box-shadow: 0 12px 24px rgba(8, 127, 91, 0.18);
+  transform: translateY(-1px);
+}
+
+.admin-deploy-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+}
+
+.admin-deploy-message {
+  background: #fff;
+  border: 1px solid #d8e4dd;
+  border-radius: 999px;
+  box-shadow: 0 12px 30px rgba(18, 37, 29, 0.12);
+  color: #4d5c55;
+  font-size: 12px;
+  font-weight: 800;
+  max-width: 300px;
+  overflow: hidden;
+  padding: 7px 10px;
+  position: absolute;
+  right: 0;
+  text-overflow: ellipsis;
+  top: calc(100% + 8px);
+  white-space: nowrap;
+  z-index: 30;
+}
+
+.admin-deploy-message.is-success {
+  border-color: #b8e8cf;
+  color: #056247;
+}
+
+.admin-deploy-message.is-error {
+  border-color: #f0c1b2;
+  color: #b34a1e;
+}
+
 .admin-preview-link .nav-icon {
   height: 16px;
   width: 16px;

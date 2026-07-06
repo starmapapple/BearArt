@@ -53,21 +53,30 @@ NEXT_PUBLIC_ASSET_BASE_URL=https://cdn.grupbeli.com
 
 填完环境变量后，需要重新部署一次才会生效。
 
-## 第三步：部署 Production
+## 第三步：配置一键发布
 
-本地先确认构建通过：
+在 Vercel 项目里进入：
 
-```bash
-npm run build
+```txt
+Settings -> Git -> Deploy Hooks
 ```
 
-然后部署：
+新建一个 Deploy Hook：
 
-```bash
-vercel --prod
+```txt
+Name: Admin publish
+Branch: main
 ```
 
-如果还没有登录 Vercel CLI，它会提示你登录。
+复制生成的 Hook URL，添加到 Vercel Production 环境变量：
+
+```env
+VERCEL_DEPLOY_HOOK_URL=你的Deploy Hook URL
+```
+
+以后后台里的普通修改只保存数据，不会自动发布。需要上线时，进入后台点击右上角 `发布线上`。
+
+如果还没有配置这个变量，后台按钮会提示缺少 `VERCEL_DEPLOY_HOOK_URL`，不会误发布。
 
 ## 第四步：绑定域名
 

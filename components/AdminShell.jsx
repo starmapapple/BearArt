@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AdminDeployButton from "@/components/AdminDeployButton";
 
 const navSections = [
   {
@@ -89,6 +90,7 @@ export default function AdminShell({ children }) {
             <strong>{activeItem.label}</strong>
           </div>
           <div className="admin-topbar-actions">
+            <AdminDeployButton />
             <Link className="admin-preview-link" href="/p/colorbear-art" target="_blank">
               <NavIcon name="external" />
               <span>打开前台</span>
