@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { writeAuditLog } from "@/lib/auditLog";
 
+export async function GET() {
+  return NextResponse.json({
+    configured: Boolean(process.env.VERCEL_DEPLOY_HOOK_URL)
+  });
+}
+
 export async function POST() {
   const hookUrl = process.env.VERCEL_DEPLOY_HOOK_URL;
 
