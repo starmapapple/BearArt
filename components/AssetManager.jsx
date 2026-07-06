@@ -68,16 +68,6 @@ export default function AssetManager({ assets }) {
   const selectedSet = useMemo(() => new Set(selectedAssets), [selectedAssets]);
   const selectedVisibleAssets = useMemo(() => filteredAssets.filter((asset) => selectedSet.has(asset.url) && !asset.referenceCount), [filteredAssets, selectedSet]);
   const allDeletableSelected = deletableAssets.length > 0 && deletableAssets.every((asset) => selectedSet.has(asset.url));
-  const assetFamilyCounts = useMemo(() => {
-    const counts = new Map();
-    for (const asset of assets) {
-      const familyKey = getAssetFamilyKey(asset);
-      if (!familyKey) continue;
-      counts.set(familyKey, (counts.get(familyKey) || 0) + 1);
-    }
-    return counts;
-  }, [assets]);
-
   async function copyUrl(url) {
     await navigator.clipboard.writeText(url);
     setMessage("已复制素材 URL。");
@@ -422,10 +412,8 @@ export default function AssetManager({ assets }) {
           </div>
         ) : null}
         {filteredAssets.map((asset) => {
-          const familyKey = getAssetFamilyKey(asset);
-          const isVersionedAsset = Boolean(familyKey && (assetFamilyCounts.get(familyKey) || 0) > 1);
           const isApplied = Boolean(asset.referenceCount);
-          const canApply = Boolean(isVersionedAsset && !isApplied);
+          const canApply = !isApplied;
           return (
           <article className={`card asset-card ${asset.referenceCount ? "is-referenced" : "is-free"}`} key={asset.url}>
             <div className="asset-select-cell">
@@ -547,7 +535,7 @@ export default function AssetManager({ assets }) {
                     className="btn apply small compact"
                     disabled={!canApply || busyAsset === `apply-${asset.url}`}
                     type="button"
-                    title={canApply ? "切换落地页使用这个素材" : "没有可切换的同组素材"}
+                    title="切换落地页使用这个素材"
                     onClick={() => applyAssetToReferences(asset)}
                   >
                     {busyAsset === `apply-${asset.url}` ? "..." : "应用"}

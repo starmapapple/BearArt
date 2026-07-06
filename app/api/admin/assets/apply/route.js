@@ -25,7 +25,10 @@ export async function POST(request) {
       const result = target
         ? replaceAssetUrl(product, target, normalized)
         : replaceAssetFamily(product, familyKey, normalized);
-      const { value, changed, from } = result;
+      const fallbackResult = result.changed || target
+        ? result
+        : replaceAssetBaseName(product, getAssetBaseKey(normalized), normalized);
+      const { value, changed, from } = fallbackResult;
       if (!changed) continue;
       await updateProduct(product.id, value);
       changedProducts.push(product.title || product.slug || product.id);
@@ -135,6 +138,32 @@ function replaceAssetUrl(value, targetPath, nextPath) {
   }
 }
 
+function replaceAssetBaseName(value, baseKey, nextPath) {
+  let changed = false;
+  const from = new Set();
+
+  const replaced = visit(value);
+  return { value: replaced, changed, from };
+
+  function visit(item) {
+    if (typeof item === "string") {
+      const next = replaceBaseNameString(item, baseKey, nextPath, from);
+      if (next !== item) changed = true;
+      return next;
+    }
+
+    if (Array.isArray(item)) {
+      return item.map(visit);
+    }
+
+    if (item && typeof item === "object") {
+      return Object.fromEntries(Object.entries(item).map(([key, child]) => [key, visit(child)]));
+    }
+
+    return item;
+  }
+}
+
 function replaceString(value, targetPath, nextPath) {
   if (value === targetPath) return nextPath;
   if (value.startsWith(`${targetPath}?`)) return `${nextPath}${value.slice(targetPath.length)}`;
@@ -156,4 +185,26 @@ function replaceFamilyString(value, familyKey, nextPath, from) {
   } catch {
     return value;
   }
+}
+
+function replaceBaseNameString(value, baseKey, nextPath, from) {
+  const text = String(value || "");
+  const [pathPart] = text.split("?");
+
+  if (!pathPart.startsWith("/")) return value;
+
+  try {
+    const normalized = normalizeAssetPath(pathPart);
+    if (normalized === nextPath) return value;
+    if (!imageExtensions.includes(path.posix.extname(normalized).toLowerCase())) return value;
+    if (getAssetBaseKey(normalized) !== baseKey) return value;
+    from.add(normalized);
+    return `${nextPath}${text.slice(pathPart.length)}`;
+  } catch {
+    return value;
+  }
+}
+
+function getAssetBaseKey(assetPath) {
+  return originalBaseNameFromCompressed(path.posix.basename(assetPath, path.posix.extname(assetPath)));
 }
