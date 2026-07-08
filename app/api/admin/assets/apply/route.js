@@ -28,7 +28,10 @@ export async function POST(request) {
       const fallbackResult = result.changed || target
         ? result
         : replaceAssetBaseName(product, getAssetBaseKey(normalized), normalized);
-      const { value, changed, from } = fallbackResult;
+      const staticResult = fallbackResult.changed || target
+        ? fallbackResult
+        : replaceColorBearStaticAsset(product, normalized);
+      const { value, changed, from } = staticResult;
       if (!changed) continue;
       await updateProduct(product.id, value);
       changedProducts.push(product.title || product.slug || product.id);
@@ -86,6 +89,50 @@ function replaceAssetFamily(value, familyKey, nextPath) {
 
     return item;
   }
+}
+
+function replaceColorBearStaticAsset(product, nextPath) {
+  const from = new Set();
+
+  if (product.slug !== "colorbear-art") {
+    return { value: product, changed: false, from };
+  }
+
+  const baseKey = getAssetBaseKey(nextPath);
+  const staticTargets = [
+    {
+      baseKey: getAssetBaseKey("/uploads/colorbear-art/hero.png"),
+      fallback: "/uploads/colorbear-art/hero.png",
+      field: "problemImage"
+    },
+    {
+      baseKey: getAssetBaseKey("/uploads/colorbear-art/usage-guide.png"),
+      fallback: "/uploads/colorbear-art/usage-guide.png",
+      field: "usageGuideImage"
+    }
+  ];
+  const target = staticTargets.find((item) => item.baseKey === baseKey);
+
+  if (!target) {
+    return { value: product, changed: false, from };
+  }
+
+  const currentPath = product[target.field] || target.fallback;
+  const normalizedCurrent = normalizeAssetPath(currentPath);
+
+  if (normalizedCurrent === nextPath) {
+    return { value: product, changed: false, from };
+  }
+
+  from.add(normalizedCurrent);
+  return {
+    value: {
+      ...product,
+      [target.field]: nextPath
+    },
+    changed: true,
+    from
+  };
 }
 
 function inferOriginalAssetPath(assetPath, products) {

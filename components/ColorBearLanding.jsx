@@ -44,6 +44,8 @@ export default function ColorBearLanding({ product }) {
   const giftImages = assetList(product.giftImages?.length ? product.giftImages : ["/uploads/colorbear-art/disney-dress-gift.png"]);
   const videoUrl = assetUrl(product.videoUrl);
   const videoPoster = assetUrl(product.videoPoster || heroImage);
+  const problemImage = assetUrl(product.problemImage || "/uploads/colorbear-art/hero.png");
+  const usageGuideImage = assetUrl(product.usageGuideImage || "/uploads/colorbear-art/usage-guide.png");
   const price = formatIdr(product.price);
   const compareAtPrice = product.compareAtPrice ? formatIdr(product.compareAtPrice) : "";
   const ctaText = product.ctaText || "Langsung COD";
@@ -112,7 +114,7 @@ export default function ColorBearLanding({ product }) {
 
         <section className="colorbear-band colorbear-problem">
           <div className="colorbear-problem-media">
-            <img alt="ColorBear Art kit lengkap dengan kelas kreatif untuk anak" src={assetUrl("/uploads/colorbear-art/hero.png")} />
+            <img alt="ColorBear Art kit lengkap dengan kelas kreatif untuk anak" src={problemImage} />
           </div>
           <h2>Kalau hanya beli alat gambar, anak sering bertanya: setelah ini bikin apa?</h2>
           <div className="colorbear-problem-grid">
@@ -199,7 +201,7 @@ export default function ColorBearLanding({ product }) {
         </section>
 
         <section className="colorbear-band colorbear-usage-guide">
-          <img alt="Panduan cepat aktivasi aplikasi dan kode kursus ColorBear Art" src={assetUrl("/uploads/colorbear-art/usage-guide.png")} />
+          <img alt="Panduan cepat aktivasi aplikasi dan kode kursus ColorBear Art" src={usageGuideImage} />
           <div>
             <span className="colorbear-kicker">Panduan cepat</span>
             <h2>Mulai belajar dalam hitungan menit</h2>
