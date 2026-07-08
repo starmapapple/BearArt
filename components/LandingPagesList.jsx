@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import DeleteProductButton from "@/components/DeleteProductButton";
 import { formatIdr } from "@/lib/format";
 import { statusLabel } from "@/lib/adminLabels";
 
@@ -112,6 +113,7 @@ export default function LandingPagesList({ products }) {
                             预览
                           </Link>
                         )}
+                        <DeleteProductButton product={{ id: product.id, title: product.title, slug: product.slug }} />
                       </div>
                     </td>
                   </tr>

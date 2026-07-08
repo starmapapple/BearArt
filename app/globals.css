@@ -810,6 +810,15 @@ textarea {
   background: var(--warn);
 }
 
+.btn.danger {
+  background: #c94c1c;
+  color: #fff;
+}
+
+.btn.danger:hover {
+  box-shadow: 0 12px 24px rgba(201, 76, 28, 0.18);
+}
+
 .btn.small {
   font-size: 13px;
   min-height: 34px;
