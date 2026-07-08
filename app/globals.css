@@ -352,6 +352,91 @@ textarea {
   color: #b34a1e;
 }
 
+.admin-deploy-progress {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #cfe2d8;
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(18, 37, 29, 0.18);
+  color: #12251d;
+  min-width: 250px;
+  padding: 12px;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 300px;
+  z-index: 40;
+}
+
+.admin-deploy-progress-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-deploy-progress-head strong {
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.admin-deploy-progress-head span {
+  color: #087f5b;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.admin-deploy-track {
+  background: #e7f0eb;
+  border-radius: 999px;
+  height: 8px;
+  margin: 9px 0 8px;
+  overflow: hidden;
+}
+
+.admin-deploy-track span {
+  background: linear-gradient(90deg, #0c8b63, #36c391);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transition: width 0.35s ease;
+}
+
+.admin-deploy-progress p {
+  color: #5b6a63;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.admin-deploy-progress a {
+  align-items: center;
+  background: #10251d;
+  border-radius: 10px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 900;
+  justify-content: center;
+  margin-top: 10px;
+  min-height: 32px;
+  padding: 0 12px;
+  text-decoration: none;
+}
+
+.admin-deploy-progress.is-error {
+  border-color: #f0c1b2;
+}
+
+.admin-deploy-progress.is-error .admin-deploy-track span {
+  background: #c45728;
+}
+
+.admin-deploy-progress.is-error .admin-deploy-progress-head span,
+.admin-deploy-progress.is-error p {
+  color: #b34a1e;
+}
+
 .admin-preview-link .nav-icon {
   height: 16px;
   width: 16px;

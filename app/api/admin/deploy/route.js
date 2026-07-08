@@ -9,6 +9,7 @@ export async function GET() {
 
 export async function POST() {
   const hookUrl = process.env.VERCEL_DEPLOY_HOOK_URL;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://grupbeli.com";
 
   if (!hookUrl) {
     return NextResponse.json(
@@ -59,6 +60,7 @@ export async function POST() {
     return NextResponse.json({
       ok: true,
       message: "已触发线上发布，Vercel 正在构建。",
+      checkUrl: `${siteUrl.replace(/\/$/, "")}/p/colorbear-art`,
       deployment: payload
     });
   } catch (error) {
