@@ -34,6 +34,9 @@ export default function CheckoutForm({ product, locale = "zh" }) {
         processing: "Diproses...",
         requiredPhone: "Nomor WhatsApp wajib diisi.",
         requiredAddress: "Mohon lengkapi data pengiriman.",
+        requiredProvince: "Pilih provinsi pengiriman.",
+        requiredCity: "Pilih kota/kabupaten pengiriman.",
+        fixHighlighted: "Lengkapi bagian yang ditandai lalu coba lagi.",
         addressHint: "Alamat lengkap wajib diisi, minimal 8 karakter.",
         orderFail: "Pesanan gagal, silakan coba lagi.",
         nameHint: "Masukkan nama yang valid, minimal 2 karakter. Boleh memakai huruf, angka, spasi, titik, apostrof, atau tanda hubung.",
@@ -64,6 +67,9 @@ export default function CheckoutForm({ product, locale = "zh" }) {
         processing: "处理中...",
         requiredPhone: "请填写 WhatsApp 手机号。",
         requiredAddress: "请填写完整的收货信息。",
+        requiredProvince: "请选择省份。",
+        requiredCity: "请选择城市/县。",
+        fixHighlighted: "请先补全标红字段后再提交。",
         addressHint: "请填写具体收货地址，至少 8 个字符。",
         orderFail: "下单失败，请稍后重试。",
         nameHint: INDONESIA_NAME_HINT,
@@ -99,9 +105,11 @@ export default function CheckoutForm({ product, locale = "zh" }) {
   const [nameError, setNameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [addressError, setAddressError] = useState("");
+  const [regionErrors, setRegionErrors] = useState({ province: "", city: "" });
   const [locationStatus, setLocationStatus] = useState({ loading: false, message: "" });
   const [regions, setRegions] = useState({ provinces: [], regencies: [], loadingProvinces: true, loadingRegencies: false });
   const [open, setOpen] = useState(false);
+  const fieldRefs = useRef({});
   const analyticsRef = useRef({ productId: product.id, productSlug: product.slug, paymentMethod: methods[0] || "virtual_account" });
   analyticsRef.current = {
     productId: product.id,
@@ -216,7 +224,7 @@ export default function CheckoutForm({ product, locale = "zh" }) {
   function updateName(value) {
     setForm((current) => ({ ...current, name: value }));
     setNameError("");
-    setStatus((current) => (current.error === labels.nameHint ? { loading: false, error: "" } : current));
+    setStatus((current) => (current.error === labels.nameHint || current.error === labels.fixHighlighted ? { loading: false, error: "" } : current));
   }
 
   function validateNameField() {
@@ -234,7 +242,7 @@ export default function CheckoutForm({ product, locale = "zh" }) {
   function updatePhone(value) {
     setForm((current) => ({ ...current, phone: value }));
     setPhoneError("");
-    setStatus((current) => (current.error === labels.phoneHint ? { loading: false, error: "" } : current));
+    setStatus((current) => (current.error === labels.phoneHint || current.error === labels.fixHighlighted ? { loading: false, error: "" } : current));
   }
 
   function validatePhoneField() {
@@ -258,7 +266,9 @@ export default function CheckoutForm({ product, locale = "zh" }) {
   function updateAddress(value) {
     setForm((current) => ({ ...current, address: value }));
     setAddressError("");
-    setStatus((current) => (current.error === labels.addressHint || current.error === labels.requiredAddress ? { loading: false, error: "" } : current));
+    setStatus((current) =>
+      current.error === labels.addressHint || current.error === labels.requiredAddress || current.error === labels.fixHighlighted ? { loading: false, error: "" } : current
+    );
   }
 
   function validateAddressField() {
@@ -272,6 +282,15 @@ export default function CheckoutForm({ product, locale = "zh" }) {
     return true;
   }
 
+  function focusFirstInvalidField(field) {
+    window.setTimeout(() => {
+      const target = fieldRefs.current[field];
+      if (!target) return;
+      target.scrollIntoView({ behavior: "smooth", block: "center" });
+      target.focus({ preventScroll: true });
+    }, 0);
+  }
+
   function chooseProvince(provinceId) {
     const province = regions.provinces.find((item) => item.id === provinceId);
     setForm((current) => ({
@@ -281,6 +300,11 @@ export default function CheckoutForm({ product, locale = "zh" }) {
       cityId: "",
       city: ""
     }));
+    setRegionErrors((current) => ({
+      province: provinceId ? "" : current.province,
+      city: provinceId ? labels.requiredCity : current.city
+    }));
+    setStatus((current) => (current.error === labels.requiredAddress || current.error === labels.fixHighlighted ? { loading: false, error: "" } : current));
   }
 
   function chooseCity(cityId) {
@@ -290,6 +314,8 @@ export default function CheckoutForm({ product, locale = "zh" }) {
       cityId,
       city: city?.name || ""
     }));
+    setRegionErrors((current) => ({ ...current, city: cityId ? "" : current.city }));
+    setStatus((current) => (current.error === labels.requiredAddress || current.error === labels.fixHighlighted ? { loading: false, error: "" } : current));
   }
 
   function choosePaymentMethod(value) {
@@ -457,32 +483,57 @@ export default function CheckoutForm({ product, locale = "zh" }) {
       province: form.province
     });
 
+    let firstInvalidField = "";
+    let hasError = false;
     const nameValidation = validateIndonesiaName(form.name);
     if (!nameValidation.valid) {
       setNameError(labels.nameHint);
-      setStatus({ loading: false, error: labels.nameHint });
+      if (!firstInvalidField) firstInvalidField = "name";
+      hasError = true;
       trackFormError("name", labels.nameHint);
-      return;
+    } else {
+      setNameError("");
     }
 
     const phoneValidation = validateIndonesiaWhatsapp(form.phone);
     if (!phoneValidation.valid) {
       setPhoneError(labels.phoneHint);
-      setStatus({ loading: false, error: labels.phoneHint });
+      if (!firstInvalidField) firstInvalidField = "phone";
+      hasError = true;
       trackFormError("phone", labels.phoneHint);
-      return;
+    } else {
+      setPhoneError("");
     }
 
-    const addressValid = validateAddressField();
+    const nextRegionErrors = {
+      province: form.province ? "" : labels.requiredProvince,
+      city: form.city ? "" : labels.requiredCity
+    };
+    setRegionErrors(nextRegionErrors);
+    if (nextRegionErrors.province) {
+      if (!firstInvalidField) firstInvalidField = "province";
+      hasError = true;
+      trackFormError("province", nextRegionErrors.province);
+    }
+    if (nextRegionErrors.city) {
+      if (!firstInvalidField) firstInvalidField = "city";
+      hasError = true;
+      trackFormError("city", nextRegionErrors.city);
+    }
+
+    const addressValid = form.address.trim().length >= 8;
     if (!addressValid) {
-      setStatus({ loading: false, error: labels.addressHint });
-      return;
+      setAddressError(labels.addressHint);
+      if (!firstInvalidField) firstInvalidField = "address";
+      hasError = true;
+      trackFormError("address", labels.addressHint);
+    } else {
+      setAddressError("");
     }
 
-    const requiredValues = [form.city, form.province];
-    if (requiredValues.some((value) => !String(value || "").trim())) {
-      setStatus({ loading: false, error: labels.requiredAddress });
-      trackFormError("region", labels.requiredAddress);
+    if (hasError) {
+      setStatus({ loading: false, error: labels.fixHighlighted });
+      focusFirstInvalidField(firstInvalidField);
       return;
     }
 
@@ -624,6 +675,9 @@ export default function CheckoutForm({ product, locale = "zh" }) {
               aria-describedby={nameError ? "name-error" : undefined}
               aria-invalid={Boolean(nameError)}
               id="name"
+              ref={(node) => {
+                fieldRefs.current.name = node;
+              }}
               required
               value={form.name}
               onBlur={validateNameField}
@@ -641,6 +695,9 @@ export default function CheckoutForm({ product, locale = "zh" }) {
               id="phone"
               inputMode="tel"
               placeholder={labels.phonePlaceholder}
+              ref={(node) => {
+                fieldRefs.current.phone = node;
+              }}
               required
               value={form.phone}
               aria-invalid={Boolean(phoneError)}
@@ -664,8 +721,13 @@ export default function CheckoutForm({ product, locale = "zh" }) {
           <div className="field">
             <label htmlFor="province">{labels.province}</label>
             <select
+              aria-describedby={regionErrors.province ? "province-error" : undefined}
+              aria-invalid={Boolean(regionErrors.province)}
               disabled={regions.loadingProvinces}
               id="province"
+              ref={(node) => {
+                fieldRefs.current.province = node;
+              }}
               required
               value={form.provinceId}
               onChange={(event) => chooseProvince(event.target.value)}
@@ -677,12 +739,22 @@ export default function CheckoutForm({ product, locale = "zh" }) {
                 </option>
               ))}
             </select>
+            {regionErrors.province ? (
+              <p className="field-error" id="province-error">
+                {regionErrors.province}
+              </p>
+            ) : null}
           </div>
           <div className="field">
             <label htmlFor="city">{labels.city}</label>
             <select
+              aria-describedby={regionErrors.city ? "city-error" : undefined}
+              aria-invalid={Boolean(regionErrors.city)}
               disabled={!form.provinceId || regions.loadingRegencies}
               id="city"
+              ref={(node) => {
+                fieldRefs.current.city = node;
+              }}
               required
               value={form.cityId}
               onChange={(event) => chooseCity(event.target.value)}
@@ -694,6 +766,11 @@ export default function CheckoutForm({ product, locale = "zh" }) {
                 </option>
               ))}
             </select>
+            {regionErrors.city ? (
+              <p className="field-error" id="city-error">
+                {regionErrors.city}
+              </p>
+            ) : null}
           </div>
           <div className="field full">
             <label htmlFor="address">{labels.address}</label>
@@ -702,6 +779,9 @@ export default function CheckoutForm({ product, locale = "zh" }) {
               aria-invalid={Boolean(addressError)}
               id="address"
               minLength={8}
+              ref={(node) => {
+                fieldRefs.current.address = node;
+              }}
               required
               value={form.address}
               onBlur={validateAddressField}
