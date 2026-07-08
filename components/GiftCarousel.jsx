@@ -42,9 +42,9 @@ export default function GiftCarousel({ images = [], alt = "Bonus gift", title = 
           }}
         >
           <img alt={`${alt} ${active + 1}`} src={slides[active]} />
-          {compact ? null : <span>Klik untuk lihat besar</span>}
+          <span>{compact ? "Lihat detail" : "Klik untuk lihat besar"}</span>
         </button>
-        {slides.length > 1 ? (
+        {!compact && slides.length > 1 ? (
           <div className="gift-carousel-controls">
             <button aria-label="Gambar sebelumnya" type="button" onClick={() => move(-1)}>
               ‹

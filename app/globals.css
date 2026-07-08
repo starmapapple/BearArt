@@ -2625,6 +2625,13 @@ th {
   box-shadow: 0 8px 18px rgba(124, 77, 8, 0.12);
 }
 
+.gift-carousel.is-compact .gift-carousel-main span {
+  font-size: 8px;
+  letter-spacing: 0;
+  line-height: 1.1;
+  padding: 3px 2px;
+}
+
 .gift-carousel-main img {
   display: block;
   height: 100%;
