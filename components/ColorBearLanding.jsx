@@ -4,6 +4,7 @@ import DemoVideoModal from "@/components/DemoVideoModal";
 import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
 import GiftCarousel from "@/components/GiftCarousel";
 import PublicHeader from "@/components/PublicHeader";
+import ReviewGallery from "@/components/ReviewGallery";
 import StickyPromoBar from "@/components/StickyPromoBar";
 import { assetList, assetUrl } from "@/lib/assets";
 import { formatIdr } from "@/lib/format";
@@ -38,6 +39,23 @@ const showcaseQuestions = [
   }
 ];
 
+const reviewGalleryFallback = {
+  Ayu: [
+    "/uploads/colorbear-art-reviews/gallery/ayu-work-1.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/ayu-work-2.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/ayu-work-3.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/ayu-work-4.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/ayu-work-5.jpeg"
+  ],
+  Dina: [
+    "/uploads/colorbear-art-reviews/gallery/dina-work-1.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/dina-work-2.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/dina-work-3.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/dina-work-4.jpeg",
+    "/uploads/colorbear-art-reviews/gallery/dina-work-5.jpeg"
+  ]
+};
+
 export default function ColorBearLanding({ product }) {
   const gallery = assetList(product.gallery?.length ? product.gallery : galleryFallback);
   const heroImage = assetUrl(product.heroImage || gallery[0]);
@@ -51,7 +69,8 @@ export default function ColorBearLanding({ product }) {
   const ctaText = product.ctaText || "Langsung COD";
   const reviews = (product.reviews || []).map((review) => ({
     ...review,
-    avatar: assetUrl(review.avatar)
+    avatar: assetUrl(review.avatar),
+    gallery: assetList(review.gallery?.length ? review.gallery : reviewGalleryFallback[review.name] || [])
   }));
 
   return (
@@ -233,6 +252,7 @@ export default function ColorBearLanding({ product }) {
                   </span>
                 </figcaption>
                 <blockquote>{review.text}</blockquote>
+                <ReviewGallery images={review.gallery} name={review.name} />
               </figure>
             ))}
           </div>

@@ -3517,6 +3517,59 @@ th {
   margin: 0;
 }
 
+.review-gallery {
+  display: grid;
+  gap: 7px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 2px;
+}
+
+.review-gallery-thumb {
+  aspect-ratio: 1;
+  background: #eef5f1;
+  border: 1px solid #d9e8df;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+}
+
+.review-gallery-thumb img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.18s ease;
+  width: 100%;
+}
+
+.review-gallery-thumb:hover img {
+  transform: scale(1.04);
+}
+
+.review-lightbox-panel {
+  align-items: center;
+  justify-items: center;
+  max-width: min(92vw, 760px);
+}
+
+.review-lightbox-panel img {
+  background: #fff;
+  height: auto;
+  max-height: min(82vh, 760px);
+  max-width: 100%;
+  object-fit: contain;
+  width: auto;
+}
+
+.review-lightbox-count {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  padding: 6px 10px;
+}
+
 .checkout-card {
   background: #fff;
   padding: 16px 20px 20px;
