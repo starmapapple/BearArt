@@ -89,7 +89,7 @@ export default function ColorBearLanding({ product }) {
                   product={product}
                   alt="Gaun anak karakter Disney senilai Rp 200.000"
                   title="Bonus ekstra untuk order promo"
-                  description="Gaun anak karakter Disney senilai Rp 200.000. Bonus berlaku untuk order yang masuk saat promo masih berjalan."
+                  description="Gaun anak karakter Disney senilai Rp 200.000. Karena ini bonus, ukuran dan warna dikirim secara acak. Jika ingin request ukuran atau warna tertentu, hubungi Customer Service WhatsApp kami. Kami akan berusaha memenuhi permintaan Anda."
                 />
               </div>
             </div>
