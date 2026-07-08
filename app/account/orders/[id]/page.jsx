@@ -12,7 +12,7 @@ export default async function AccountOrderDetailPage({ params }) {
 
   return (
     <main className="public-page with-nav">
-      <PublicHeader />
+      <PublicHeader locale="id" mode="product-only" />
       <section className="site-section narrow">
         <div className="page-head">
           <div>
