@@ -7,6 +7,7 @@ import { INDONESIA_NAME_HINT, validateIndonesiaName } from "@/lib/nameValidation
 import { getAnalyticsContext, getAttribution, trackEvent } from "@/lib/analyticsClient";
 
 const PAYMENT_METHOD_ORDER = ["cod", "virtual_account", "qris", "ewallet", "card"];
+const CHECKOUT_STORAGE_KEY = "bear_art_checkout_profile_v1";
 
 export default function CheckoutForm({ product, locale = "zh" }) {
   const isId = locale === "id";
@@ -109,6 +110,7 @@ export default function CheckoutForm({ product, locale = "zh" }) {
   const [locationStatus, setLocationStatus] = useState({ loading: false, message: "" });
   const [regions, setRegions] = useState({ provinces: [], regencies: [], loadingProvinces: true, loadingRegencies: false });
   const [open, setOpen] = useState(false);
+  const [savedFormLoaded, setSavedFormLoaded] = useState(false);
   const fieldRefs = useRef({});
   const analyticsRef = useRef({ productId: product.id, productSlug: product.slug, paymentMethod: methods[0] || "virtual_account" });
   analyticsRef.current = {
@@ -216,6 +218,75 @@ export default function CheckoutForm({ product, locale = "zh" }) {
       active = false;
     };
   }, [form.provinceId]);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(CHECKOUT_STORAGE_KEY);
+      if (!raw) {
+        setSavedFormLoaded(true);
+        return;
+      }
+
+      const saved = JSON.parse(raw);
+      const savedVariant = typeof saved.variant === "string" && product.variants?.includes(saved.variant) ? saved.variant : "";
+      const savedPaymentMethod = typeof saved.paymentMethod === "string" && methods.includes(saved.paymentMethod) ? saved.paymentMethod : "";
+
+      setForm((current) => ({
+        ...current,
+        name: typeof saved.name === "string" ? saved.name : current.name,
+        phone: typeof saved.phone === "string" ? saved.phone : current.phone,
+        address: typeof saved.address === "string" ? saved.address : current.address,
+        province: typeof saved.province === "string" ? saved.province : current.province,
+        provinceId: typeof saved.provinceId === "string" ? saved.provinceId : current.provinceId,
+        city: typeof saved.city === "string" ? saved.city : current.city,
+        cityId: typeof saved.cityId === "string" ? saved.cityId : current.cityId,
+        postalCode: typeof saved.postalCode === "string" ? saved.postalCode : current.postalCode,
+        variant: savedVariant || current.variant,
+        paymentMethod: savedPaymentMethod || current.paymentMethod,
+        location: null
+      }));
+    } catch {
+      window.localStorage.removeItem(CHECKOUT_STORAGE_KEY);
+    } finally {
+      setSavedFormLoaded(true);
+    }
+  }, [methods, product.variants]);
+
+  useEffect(() => {
+    if (!savedFormLoaded) return;
+
+    try {
+      window.localStorage.setItem(
+        CHECKOUT_STORAGE_KEY,
+        JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          address: form.address,
+          province: form.province,
+          provinceId: form.provinceId,
+          city: form.city,
+          cityId: form.cityId,
+          postalCode: form.postalCode,
+          variant: form.variant,
+          paymentMethod: form.paymentMethod
+        })
+      );
+    } catch {
+      // localStorage can fail in private mode; checkout should still work normally.
+    }
+  }, [
+    form.address,
+    form.city,
+    form.cityId,
+    form.name,
+    form.paymentMethod,
+    form.phone,
+    form.postalCode,
+    form.province,
+    form.provinceId,
+    form.variant,
+    savedFormLoaded
+  ]);
 
   function update(key, value) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -674,6 +745,7 @@ export default function CheckoutForm({ product, locale = "zh" }) {
             <input
               aria-describedby={nameError ? "name-error" : undefined}
               aria-invalid={Boolean(nameError)}
+              autoComplete="name"
               id="name"
               ref={(node) => {
                 fieldRefs.current.name = node;
@@ -692,6 +764,7 @@ export default function CheckoutForm({ product, locale = "zh" }) {
           <div className="field full">
             <label htmlFor="phone">{labels.phone}</label>
             <input
+              autoComplete="tel"
               id="phone"
               inputMode="tel"
               placeholder={labels.phonePlaceholder}
@@ -777,6 +850,7 @@ export default function CheckoutForm({ product, locale = "zh" }) {
             <textarea
               aria-describedby={addressError ? "address-error" : undefined}
               aria-invalid={Boolean(addressError)}
+              autoComplete="street-address"
               id="address"
               minLength={8}
               ref={(node) => {
