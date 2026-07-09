@@ -7,13 +7,15 @@
     "title": "ColorBear Art Kit Kreatif Anak",
     "subtitle": "Bukan sekadar alat gambar. Anak dapat perlengkapan seni lengkap dan kelas kreatif step-by-step yang bisa dibuka lewat HP atau tablet.",
     "heroImage": "/uploads/colorbear-art/hero-offer-kit-small.webp",
+    "problemImage": "/uploads/colorbear-art/hero-small.webp",
     "videoUrl": "/uploads/colorbear-art/demo.mp4",
     "videoPoster": "/uploads/colorbear-art/hero-offer-kit-small.webp",
+    "usageGuideImage": "/uploads/colorbear-art/usage-guide-small.webp",
     "giftImages": [
-      "/uploads/colorbear-art/bonus/dress-kids-a-1.jpg",
-      "/uploads/colorbear-art/bonus/dress-kids-a-2.jpg",
-      "/uploads/colorbear-art/bonus/dress-kids-b-1.jpg",
-      "/uploads/colorbear-art/bonus/dress-kids-b-2.jpg"
+      "/uploads/colorbear-art-bonus/dress-kids-a-1-small.webp",
+      "/uploads/colorbear-art-bonus/dress-kids-a-2-small.webp",
+      "/uploads/colorbear-art-bonus/dress-kids-b-1-small.webp",
+      "/uploads/colorbear-art-bonus/dress-kids-b-2-small.webp"
     ],
     "gallery": [
       "/uploads/colorbear-art/gallery-1-small.webp",
@@ -56,13 +58,27 @@
         "name": "Ayu",
         "rating": 5,
         "text": "Anak saya lebih terarah karena ada panduannya. Weekend di rumah jadi punya aktivitas yang jelas.",
-        "avatar": "/uploads/colorbear-art-reviews/ayu-balanced.webp"
+        "avatar": "/uploads/colorbear-art-reviews/ayu-balanced.webp",
+        "gallery": [
+          "/uploads/colorbear-art-reviews-gallery/ayu-work-1-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/ayu-work-2-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/ayu-work-3-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/ayu-work-4-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/ayu-work-5-small.webp"
+        ]
       },
       {
         "name": "Dina",
         "rating": 5,
         "text": "Tidak perlu antar ke kelas. Tinggal buka lewat HP, anak bisa pause dan lanjut lagi.",
-        "avatar": "/uploads/colorbear-art-reviews/dina-balanced.webp"
+        "avatar": "/uploads/colorbear-art-reviews/dina-balanced.webp",
+        "gallery": [
+          "/uploads/colorbear-art-reviews-gallery/dina-work-1-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/dina-work-2-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/dina-work-3-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/dina-work-4-small.webp",
+          "/uploads/colorbear-art-reviews-gallery/dina-work-5-small.webp"
+        ]
       }
     ],
     "faqs": [
@@ -90,63 +106,6 @@
       "googleAdsId": ""
     },
     "createdAt": "2026-07-03T00:00:00.000Z",
-    "updatedAt": "2026-07-06T02:56:19.040Z"
-  },
-  {
-    "id": "prod_sample_shaper",
-    "slug": "shaper-fit",
-    "status": "published",
-    "previewToken": "preview-shaper-fit",
-    "title": "日常塑形背心",
-    "subtitle": "适合日常穿着的舒适塑形单品，通勤、出门、居家都能轻松搭配。",
-    "heroImage": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=1200&q=80",
-    "gallery": [
-      "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=900&q=80"
-    ],
-    "currency": "IDR",
-    "price": 189000,
-    "compareAtPrice": 289000,
-    "variants": [
-      "S/M",
-      "L/XL",
-      "XXL"
-    ],
-    "benefits": [
-      "面料柔软亲肤，长时间穿着也不闷",
-      "帮助修饰身形线条，穿搭更利落",
-      "适合上班、出门和日常活动"
-    ],
-    "sections": [
-      {
-        "heading": "为什么适合日常购买",
-        "body": "页面围绕单个商品展示，用户能快速了解卖点、查看详情并直接下单，不会被其他商品分散注意力。"
-      }
-    ],
-    "reviews": [
-      {
-        "name": "Maya",
-        "rating": 5,
-        "text": "穿起来很舒服，尺码也合适，下单流程很简单。"
-      }
-    ],
-    "faqs": [
-      {
-        "question": "可以货到付款吗？",
-        "answer": "可以。下单时选择货到付款即可。"
-      }
-    ],
-    "ctaText": "立即购买",
-    "codEnabled": true,
-    "paymentMethods": [
-      "cod"
-    ],
-    "pixels": {
-      "metaPixelId": "",
-      "tiktokPixelId": "",
-      "googleAdsId": ""
-    },
-    "createdAt": "2026-07-02T00:00:00.000Z",
-    "updatedAt": "2026-07-02T14:18:00.827Z"
+    "updatedAt": "2026-07-09T11:26:56.472Z"
   }
 ]
