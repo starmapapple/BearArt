@@ -438,7 +438,7 @@ export default function AssetManager({ assets }) {
               <div className="asset-title-block">
                 <div className="asset-badges">
                   <span className={`pill ${asset.type === "image" ? "published" : "draft"}`}>{asset.type === "image" ? "图片" : "视频"}</span>
-                  {isApplied ? <span className="pill draft">已应用</span> : <span className="pill archived">未应用</span>}
+                  {isApplied ? <span className="pill asset-applied-pill">已应用</span> : <span className="pill asset-unapplied-pill">未应用</span>}
                 </div>
                 <h3 title={displayAssetName(asset)}>{displayAssetName(asset)}</h3>
                 <div className="asset-path-row">

@@ -765,6 +765,16 @@ textarea {
   color: #962f3e;
 }
 
+.pill.asset-applied-pill {
+  background: #daf5e9;
+  color: #056247;
+}
+
+.pill.asset-unapplied-pill {
+  background: #fff3cf;
+  color: #93630f;
+}
+
 .btn,
 .icon-btn {
   align-items: center;
@@ -1403,9 +1413,9 @@ textarea {
 }
 
 .asset-references.is-free {
-  background: #eaf7f1;
-  border-color: #c5e7d7;
-  color: #056247;
+  background: #fff8df;
+  border-color: #efd690;
+  color: #7b5208;
 }
 
 .asset-compress {
@@ -1441,11 +1451,11 @@ textarea {
 }
 
 .asset-card.is-free .asset-select-cell {
-  background: linear-gradient(180deg, #e9f8f1, #f7fbf9);
+  background: linear-gradient(180deg, #fff9e8, #fdfbf4);
 }
 
 .asset-card.is-referenced .asset-select-cell {
-  background: linear-gradient(180deg, #fff5d8, #f8fbf9);
+  background: linear-gradient(180deg, #e9f8f1, #f7fbf9);
 }
 
 .asset-select-cell {
@@ -1465,11 +1475,11 @@ textarea {
 }
 
 .asset-card.is-free .asset-select-cell::before {
-  background: #0a8f69;
+  background: #d89016;
 }
 
 .asset-card.is-referenced .asset-select-cell::before {
-  background: #d89016;
+  background: #0a8f69;
 }
 
 .asset-select-cell input {
@@ -1574,7 +1584,7 @@ textarea {
 }
 
 .asset-references.is-free span {
-  color: rgba(5, 98, 71, 0.72);
+  color: rgba(123, 82, 8, 0.72);
 }
 
 .asset-compress {
