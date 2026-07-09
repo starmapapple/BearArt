@@ -239,7 +239,7 @@ export default function ProductManager({ product }) {
           <textarea id="sections" value={form.sections} onChange={(event) => update("sections", event.target.value)} />
         </div>
         <div className="field full">
-          <label htmlFor="reviews">用户评价，每行格式：姓名 | 星级 | 内容 | 头像URL</label>
+          <label htmlFor="reviews">用户评价，每行格式：姓名 | 星级 | 内容 | 头像URL | 评论图URL(逗号分隔)</label>
           <textarea id="reviews" value={form.reviews} onChange={(event) => update("reviews", event.target.value)} />
         </div>
         <div className="field full">
@@ -287,7 +287,7 @@ function toForm(product) {
     paymentMethods: toTextarea(product.paymentMethods),
     sections: toStructuredTextarea(product.sections, (section) => `${section.heading || ""} | ${section.body || ""}`),
     reviews: toStructuredTextarea(product.reviews, (review) =>
-      [review.name || "", review.rating || 5, review.text || "", review.avatar || ""].join(" | ")
+      [review.name || "", review.rating || 5, review.text || "", review.avatar || "", (review.gallery || []).join(", ")].join(" | ")
     ),
     faqs: toStructuredTextarea(product.faqs, (faq) => `${faq.question || ""} | ${faq.answer || ""}`),
     metaPixelId: product.pixels?.metaPixelId || "",
@@ -311,12 +311,16 @@ function fromForm(form) {
       return { heading: heading?.trim() || "", body: rest.join("|").trim() };
     }),
     reviews: lines(form.reviews).map((line) => {
-      const [name, rating, text = "", avatar = ""] = line.split("|");
+      const [name, rating, text = "", avatar = "", gallery = ""] = line.split("|");
       return {
         name: name?.trim() || "",
         rating: Number(rating || 5),
         text: text.trim(),
-        avatar: avatar.trim()
+        avatar: avatar.trim(),
+        gallery: gallery
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean)
       };
     }),
     faqs: lines(form.faqs).map((line) => {

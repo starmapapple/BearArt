@@ -7,14 +7,8 @@ import PublicHeader from "@/components/PublicHeader";
 import ReviewGallery from "@/components/ReviewGallery";
 import StickyPromoBar from "@/components/StickyPromoBar";
 import { assetList, assetUrl } from "@/lib/assets";
+import { colorBearGalleryFallback, colorBearReviewGalleryFallback } from "@/lib/colorbearDefaults";
 import { formatIdr } from "@/lib/format";
-
-const galleryFallback = [
-  "/uploads/colorbear-art/gallery-1.png",
-  "/uploads/colorbear-art/gallery-2.png",
-  "/uploads/colorbear-art/gallery-3.png",
-  "/uploads/colorbear-art/gallery-4.png"
-];
 
 const showcaseQuestions = [
   {
@@ -39,25 +33,8 @@ const showcaseQuestions = [
   }
 ];
 
-const reviewGalleryFallback = {
-  Ayu: [
-    "/uploads/colorbear-art-reviews/gallery/ayu-work-1.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/ayu-work-2.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/ayu-work-3.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/ayu-work-4.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/ayu-work-5.jpeg"
-  ],
-  Dina: [
-    "/uploads/colorbear-art-reviews/gallery/dina-work-1.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/dina-work-2.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/dina-work-3.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/dina-work-4.jpeg",
-    "/uploads/colorbear-art-reviews/gallery/dina-work-5.jpeg"
-  ]
-};
-
 export default function ColorBearLanding({ product }) {
-  const gallery = assetList(product.gallery?.length ? product.gallery : galleryFallback);
+  const gallery = assetList(product.gallery?.length ? product.gallery : colorBearGalleryFallback);
   const heroImage = assetUrl(product.heroImage || gallery[0]);
   const giftImages = assetList(product.giftImages?.length ? product.giftImages : ["/uploads/colorbear-art/disney-dress-gift.png"]);
   const videoUrl = assetUrl(product.videoUrl);
@@ -70,7 +47,7 @@ export default function ColorBearLanding({ product }) {
   const reviews = (product.reviews || []).map((review) => ({
     ...review,
     avatar: assetUrl(review.avatar),
-    gallery: assetList(review.gallery?.length ? review.gallery : reviewGalleryFallback[review.name] || [])
+    gallery: assetList(review.gallery?.length ? review.gallery : colorBearReviewGalleryFallback[review.name] || [])
   }));
 
   return (
