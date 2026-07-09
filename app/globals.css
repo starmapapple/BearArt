@@ -1342,10 +1342,10 @@ textarea {
 }
 
 .asset-references {
-  background: #fff8e1;
-  border: 1px solid #ecd590;
+  background: #daf5e9;
+  border: 1px solid #b9e6d2;
   border-radius: 10px;
-  color: #745113;
+  color: #056247;
   font-size: 12px;
   font-weight: 800;
   margin: 0;
@@ -1575,7 +1575,7 @@ textarea {
 }
 
 .asset-references span {
-  color: rgba(116, 81, 19, 0.72);
+  color: rgba(5, 98, 71, 0.72);
   display: block;
   font-size: 10px;
   font-weight: 950;
