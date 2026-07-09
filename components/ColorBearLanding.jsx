@@ -36,11 +36,13 @@ const showcaseQuestions = [
 export default function ColorBearLanding({ product }) {
   const gallery = assetList(product.gallery?.length ? product.gallery : colorBearGalleryFallback);
   const heroImage = assetUrl(product.heroImage || gallery[0]);
-  const giftImages = assetList(product.giftImages?.length ? product.giftImages : ["/uploads/colorbear-art/disney-dress-gift.png"]);
+  const giftImages = assetList(
+    product.giftImages?.length ? product.giftImages : ["/uploads/colorbear-art-bonus/dress-kids-a-1-small.webp"]
+  );
   const videoUrl = assetUrl(product.videoUrl);
   const videoPoster = assetUrl(product.videoPoster || heroImage);
-  const problemImage = assetUrl(product.problemImage || "/uploads/colorbear-art/hero.png");
-  const usageGuideImage = assetUrl(product.usageGuideImage || "/uploads/colorbear-art/usage-guide.png");
+  const problemImage = assetUrl(product.problemImage || "/uploads/colorbear-art/hero-small.webp");
+  const usageGuideImage = assetUrl(product.usageGuideImage || "/uploads/colorbear-art/usage-guide-small.webp");
   const price = formatIdr(product.price);
   const compareAtPrice = product.compareAtPrice ? formatIdr(product.compareAtPrice) : "";
   const ctaText = product.ctaText || "Langsung COD";

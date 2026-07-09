@@ -6,6 +6,8 @@ import PublicHeader from "@/components/PublicHeader";
 import { assetList, assetUrl } from "@/lib/assets";
 import { formatIdr, getProductBySlug } from "@/lib/store";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);

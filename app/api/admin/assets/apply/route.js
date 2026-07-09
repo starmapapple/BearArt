@@ -101,13 +101,13 @@ function replaceColorBearStaticAsset(product, nextPath) {
   const baseKey = getAssetBaseKey(nextPath);
   const staticTargets = [
     {
-      baseKey: getAssetBaseKey("/uploads/colorbear-art/hero.png"),
-      fallback: "/uploads/colorbear-art/hero.png",
+      baseKey: getAssetBaseKey("/uploads/colorbear-art/hero-small.webp"),
+      fallback: "/uploads/colorbear-art/hero-small.webp",
       field: "problemImage"
     },
     {
-      baseKey: getAssetBaseKey("/uploads/colorbear-art/usage-guide.png"),
-      fallback: "/uploads/colorbear-art/usage-guide.png",
+      baseKey: getAssetBaseKey("/uploads/colorbear-art/usage-guide-small.webp"),
+      fallback: "/uploads/colorbear-art/usage-guide-small.webp",
       field: "usageGuideImage"
     }
   ];
