@@ -13,7 +13,7 @@ export default function OrderLookup({ locale = "zh" }) {
         failed: "Pencarian gagal, silakan coba lagi.",
         empty: "Pesanan tidak ditemukan. Periksa nomor pesanan atau nomor WhatsApp.",
         field: "Nomor Pesanan atau Nomor WhatsApp",
-        placeholder: "Contoh ord_xxx atau 08123456789",
+        placeholder: "Contoh 20260709A1B2C3D4 atau 08123456789",
         loading: "Mencari...",
         submit: "Cari Pesanan",
         detail: "Lihat Detail"
@@ -23,7 +23,7 @@ export default function OrderLookup({ locale = "zh" }) {
         failed: "查询失败，请稍后重试。",
         empty: "没有找到匹配订单，请确认订单号或手机号。",
         field: "订单号或 WhatsApp 手机号",
-        placeholder: "例如 ord_xxx 或 08123456789",
+        placeholder: "例如 20260709A1B2C3D4 或 08123456789",
         loading: "查询中...",
         submit: "查询订单",
         detail: "查看详情"
@@ -44,7 +44,7 @@ export default function OrderLookup({ locale = "zh" }) {
 
     setLoading(true);
     setMessage("");
-    const searchParams = value.startsWith("ord_") ? `orderId=${encodeURIComponent(value)}` : `phone=${encodeURIComponent(value)}`;
+    const searchParams = isOrderId(value) ? `orderId=${encodeURIComponent(value)}` : `phone=${encodeURIComponent(value)}`;
     const response = await fetch(`/api/account/orders?${searchParams}`);
     const payload = await response.json();
     setLoading(false);
@@ -102,4 +102,8 @@ export default function OrderLookup({ locale = "zh" }) {
       ) : null}
     </section>
   );
+}
+
+function isOrderId(value) {
+  return /^ord_/i.test(value) || /^\d{8}[a-z0-9]{8}$/i.test(value);
 }
