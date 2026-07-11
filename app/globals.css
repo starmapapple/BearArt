@@ -4047,6 +4047,39 @@ th {
   align-self: start;
 }
 
+.analytics-reset-control,
+.analytics-reset-confirm {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.analytics-reset-confirm {
+  background: #fff8e8;
+  border: 1px solid #ead59a;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.analytics-reset-confirm span {
+  color: #6f581e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.analytics-reset-confirm .btn,
+.analytics-reset-control .btn {
+  min-height: 36px;
+  padding: 7px 12px;
+}
+
+.analytics-reset-error {
+  color: #a73b32;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .analytics-filter label {
   color: #34423b;
   display: grid;
