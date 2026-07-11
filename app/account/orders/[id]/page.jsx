@@ -4,6 +4,7 @@ import PublicHeader from "@/components/PublicHeader";
 import { statusLabel } from "@/lib/adminLabels";
 import { PAYMENT_METHOD_LABELS } from "@/lib/paymentMethods";
 import { formatIdr, getOrderById } from "@/lib/store";
+import { shippingStatusLabel } from "@/lib/logistics";
 
 export default async function AccountOrderDetailPage({ params }) {
   const { id } = await params;
@@ -69,6 +70,28 @@ export default async function AccountOrderDetailPage({ params }) {
                   {order.location.lat.toFixed(5)}, {order.location.lon.toFixed(5)}
                 </dd>
               </div>
+            ) : null}
+            {order.shipping?.providerOrderId ? (
+              <>
+                <div>
+                  <dt>Kurir</dt>
+                  <dd>{[order.shipping.courierCompany, order.shipping.courierType].filter(Boolean).join(" · ") || "Biteship"}</dd>
+                </div>
+                <div>
+                  <dt>Nomor Resi</dt>
+                  <dd>{order.shipping.waybillId || "Sedang diproses"}</dd>
+                </div>
+                <div>
+                  <dt>Status Pengiriman</dt>
+                  <dd>{shippingStatusLabel(order.shipping.status, "id")}</dd>
+                </div>
+                {order.shipping.trackingUrl ? (
+                  <div>
+                    <dt>Pelacakan</dt>
+                    <dd><a href={order.shipping.trackingUrl} target="_blank" rel="noreferrer">Lacak paket</a></dd>
+                  </div>
+                ) : null}
+              </>
             ) : null}
             <div>
               <dt>创建时间</dt>

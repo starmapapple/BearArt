@@ -4,6 +4,7 @@ import { statusLabel } from "@/lib/adminLabels";
 import { PAYMENT_METHOD_LABELS, paymentMethodLabel } from "@/lib/paymentMethods";
 import { getAdminLocale } from "@/lib/adminLocaleServer";
 import { adminDateLocale, translateAdmin } from "@/lib/adminI18n";
+import { getLogisticsConfig, shippingStatusLabel } from "@/lib/logistics";
 
 export default async function OrdersPage({ searchParams }) {
   const query = await searchParams;
@@ -19,6 +20,7 @@ export default async function OrdersPage({ searchParams }) {
     to: query?.to || ""
   };
   const orders = filterOrders(allOrders, filters);
+  const logistics = getLogisticsConfig();
   const products = unique(allOrders.map((order) => order.productSlug).filter(Boolean));
   const provinces = unique(allOrders.map((order) => order.customer?.province).filter(Boolean));
   const exportHref = `/api/orders/export?${new URLSearchParams(compactFilters(filters)).toString()}`;
@@ -29,12 +31,28 @@ export default async function OrdersPage({ searchParams }) {
       <div className="page-head">
         <div>
           <h2>{t("订单管理")}</h2>
-          <p className="muted">{t("导出订单给仓库或客服，先用人工方式处理发货和 COD 确认。")}</p>
+          <p className="muted">{t("确认 COD 后创建物流单，打印面单并自动同步配送状态。")}</p>
         </div>
         <a className="btn" href={exportHref}>
           {t("导出 CSV")}
         </a>
       </div>
+
+      {query?.logisticsSuccess ? <p className="admin-notice success">{query.logisticsSuccess}</p> : null}
+      {query?.logisticsError ? <p className="admin-notice error">{query.logisticsError}</p> : null}
+
+      <section className={`logistics-summary ${logistics.ready ? "is-ready" : "is-pending"}`}>
+        <div>
+          <strong>{t("物流服务")}</strong>
+          <span>{logistics.provider === "biteship" ? "Biteship" : t("尚未启用")}</span>
+        </div>
+        <p>
+          {logistics.ready
+            ? t("API 已就绪，可从 COD 已确认订单创建运单。")
+            : t("完成上线检查中的物流环境变量后，即可创建真实运单。")}
+        </p>
+        {!logistics.ready ? <a href="/admin/readiness">{t("打开配置检查")}</a> : null}
+      </section>
 
       <form className="orders-filter admin-filter-panel">
         <label>
@@ -99,7 +117,7 @@ export default async function OrdersPage({ searchParams }) {
           <table className="orders-table">
             <thead>
               <tr>
-                <th>{t("订单")}</th><th>{t("状态")}</th><th>{t("商品")}</th><th>{t("客户")}</th><th>{t("支付")}</th><th>{t("金额")}</th><th>{t("创建时间")}</th><th>{t("操作")}</th>
+                <th>{t("订单")}</th><th>{t("状态")}</th><th>{t("商品")}</th><th>{t("客户")}</th><th>{t("支付")}</th><th>{t("金额")}</th><th>{t("物流")}</th><th>{t("创建时间")}</th><th>{t("操作")}</th>
               </tr>
             </thead>
             <tbody>
@@ -139,6 +157,9 @@ export default async function OrdersPage({ searchParams }) {
                   <td>
                     <strong className="order-total">{formatIdr(order.total)}</strong>
                   </td>
+                  <td>
+                    <ShippingPanel order={order} returnTo={returnTo} locale={locale} t={t} logistics={logistics} />
+                  </td>
                   <td>{new Date(order.createdAt).toLocaleString(adminDateLocale(locale))}</td>
                   <td>
                     <OrderActions order={order} returnTo={returnTo} locale={locale} t={t} />
@@ -152,6 +173,83 @@ export default async function OrdersPage({ searchParams }) {
         )}
       </div>
     </AdminShell>
+  );
+}
+
+function ShippingPanel({ order, returnTo, locale, t, logistics }) {
+  const shipping = order.shipping || {};
+  const created = Boolean(shipping.providerOrderId);
+  const canCreate = ["cod_confirmed", "paid"].includes(order.status) && (!created || shipping.status === "cancelled");
+
+  if (created) {
+    const canCancel = ["confirmed", "scheduled", "allocated", "picking_up"].includes(shipping.status);
+    return (
+      <div className="shipment-cell">
+        <span className={`shipment-status status-${shipping.status || "unknown"}`}>
+          {shippingStatusLabel(shipping.status, locale)}
+        </span>
+        <strong>{[shipping.courierCompany, shipping.courierType].filter(Boolean).join(" · ") || "Biteship"}</strong>
+        <code>{shipping.waybillId || t("运单号待生成")}</code>
+        <div className="shipment-actions">
+          <form action={`/api/admin/orders/${order.id}/shipment`} method="post">
+            <input type="hidden" name="action" value="refresh" />
+            <input type="hidden" name="returnTo" value={returnTo} />
+            <button className="btn secondary small" type="submit">{t("刷新物流")}</button>
+          </form>
+          {shipping.trackingUrl ? (
+            <a className="btn secondary small" href={shipping.trackingUrl} target="_blank" rel="noreferrer">{t("物流轨迹")}</a>
+          ) : null}
+          <a className="btn secondary small" href="https://app.biteship.com/" target="_blank" rel="noreferrer">
+            {t("打开 Biteship 面单")}
+          </a>
+          {canCancel ? (
+            <form action={`/api/admin/orders/${order.id}/shipment`} method="post">
+              <input type="hidden" name="action" value="cancel" />
+              <input type="hidden" name="returnTo" value={returnTo} />
+              <button className="btn warn small" type="submit">{t("取消运单")}</button>
+            </form>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  if (!canCreate) return <span className="muted">{shippingStatusLabel("not_created", locale)}</span>;
+
+  return (
+    <details className="shipment-create">
+      <summary className="btn secondary small">{t("创建运单")}</summary>
+      <form action={`/api/admin/orders/${order.id}/shipment`} method="post">
+        <input type="hidden" name="action" value="create" />
+        <input type="hidden" name="returnTo" value={returnTo} />
+        <label>
+          {t("快递公司")}
+          <select name="courierCompany" defaultValue={logistics.defaults.courierCompany}>
+            <option value="sicepat">SiCepat</option>
+            <option value="jne">JNE</option>
+            <option value="anteraja">AnterAja</option>
+            <option value="jnt">J&amp;T</option>
+            <option value="ninja">Ninja Xpress</option>
+          </select>
+        </label>
+        <label>
+          {t("服务代码")}
+          <input name="courierType" defaultValue={logistics.defaults.courierType} required />
+        </label>
+        <label>
+          {t("收件邮编")}
+          <input name="destinationPostalCode" inputMode="numeric" defaultValue={order.customer?.postalCode || ""} required />
+        </label>
+        <div className="shipment-package-grid">
+          <label>{t("重量(g)")}<input name="weight" type="number" min="1" defaultValue={logistics.defaults.weight} required /></label>
+          <label>{t("长(cm)")}<input name="length" type="number" min="1" defaultValue={logistics.defaults.length} required /></label>
+          <label>{t("宽(cm)")}<input name="width" type="number" min="1" defaultValue={logistics.defaults.width} required /></label>
+          <label>{t("高(cm)")}<input name="height" type="number" min="1" defaultValue={logistics.defaults.height} required /></label>
+        </div>
+        {!logistics.ready ? <p className="form-warning">{t("物流 API 尚未配置，暂时不能创建真实运单。")}</p> : null}
+        <button className="btn small" type="submit" disabled={!logistics.ready}>{t("确认创建运单")}</button>
+      </form>
+    </details>
   );
 }
 
