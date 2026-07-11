@@ -218,7 +218,10 @@ function ShippingPanel({ order, returnTo, locale, t, logistics }) {
 
   return (
     <details className="shipment-create">
-      <summary className="btn secondary small">{t("创建运单")}</summary>
+      <summary className="btn secondary small shipment-create-toggle" aria-label={t("关闭运单表单")}>
+        <span className="shipment-create-open-label">{t("创建运单")}</span>
+        <span className="shipment-create-close-label" aria-hidden="true">×</span>
+      </summary>
       <form action={`/api/admin/orders/${order.id}/shipment`} method="post">
         <input type="hidden" name="action" value="create" />
         <input type="hidden" name="returnTo" value={returnTo} />
