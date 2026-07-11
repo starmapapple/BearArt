@@ -1,4 +1,5 @@
 import AdminShell from "@/components/AdminShell";
+import ResetAnalyticsButton from "@/components/ResetAnalyticsButton";
 import { getAnalyticsSummary } from "@/lib/analytics";
 import { getOrders, getProducts } from "@/lib/store";
 
@@ -15,7 +16,9 @@ export default async function AnalyticsPage({ searchParams }) {
         <div>
           <h2>转化分析</h2>
           <p className="muted">按流量来源、页面互动、结账表单和支付方式分析 ColorBear 落地页漏斗。</p>
+          {summary.baselineAt ? <small className="analytics-baseline">统计起点：{new Date(summary.baselineAt).toLocaleString("zh-CN", { timeZone: "Asia/Jakarta" })}</small> : null}
         </div>
+        <ResetAnalyticsButton />
       </div>
 
       <form className="analytics-filter admin-filter-panel">

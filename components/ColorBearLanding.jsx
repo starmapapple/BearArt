@@ -4,6 +4,7 @@ import DemoVideoModal from "@/components/DemoVideoModal";
 import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
 import GiftCarousel from "@/components/GiftCarousel";
 import PublicHeader from "@/components/PublicHeader";
+import PublicFooter from "@/components/PublicFooter";
 import ReviewGallery from "@/components/ReviewGallery";
 import StickyPromoBar from "@/components/StickyPromoBar";
 import { assetList, assetUrl } from "@/lib/assets";
@@ -238,6 +239,7 @@ export default function ColorBearLanding({ product }) {
         </section>
 
         <CheckoutForm product={product} locale="id" />
+        <PublicFooter />
       </article>
       <FloatingWhatsAppButton />
       <StickyPromoBar price={price} compareAtPrice={compareAtPrice} ctaText={ctaText} product={product} />
