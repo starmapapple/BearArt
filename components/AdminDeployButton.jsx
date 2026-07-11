@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useAdminLanguage } from "@/components/AdminLanguageProvider";
 
 const deploySteps = [
   { key: "requested", label: "已触发", progress: 18, seconds: 0 },
@@ -10,6 +11,7 @@ const deploySteps = [
 ];
 
 export default function AdminDeployButton() {
+  const { t } = useAdminLanguage();
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
   const [isConfigured, setIsConfigured] = useState(null);
@@ -56,20 +58,20 @@ export default function AdminDeployButton() {
     clearProgressTimers();
     deploySteps.forEach((step) => {
       const timer = window.setTimeout(() => {
-        setDeployStep(step);
+        setDeployStep({ ...step, label: t(step.label) });
         setDeployProgress(step.progress);
         if (step.key === "requested") {
-          setMessage("Vercel 已收到发布请求。");
+          setMessage(t("Vercel 已收到发布请求。"));
         }
         if (step.key === "building") {
-          setMessage("正在构建线上版本...");
+          setMessage(t("正在构建线上版本..."));
         }
         if (step.key === "promoting") {
-          setMessage("正在切换到最新线上版本...");
+          setMessage(t("正在切换到最新线上版本..."));
         }
         if (step.key === "ready") {
           setStatus("success");
-          setMessage("发布流程已完成，可以打开线上检查。");
+          setMessage(t("发布流程已完成，可以打开线上检查。"));
           setCheckUrl(siteUrl || "https://grupbeli.com/p/colorbear-art");
         }
       }, step.seconds * 1000);
@@ -79,13 +81,13 @@ export default function AdminDeployButton() {
 
   async function deploy() {
     if (status === "loading" || status === "progress" || isConfigured === false) return;
-    const confirmed = window.confirm("确认发布到线上？Vercel 会用当前 GitHub 代码重新构建正式站。");
+    const confirmed = window.confirm(t("确认发布到线上？Vercel 会用当前 GitHub 代码重新构建正式站。"));
     if (!confirmed) return;
 
     setStatus("loading");
     setMessage("");
     setDeployProgress(8);
-    setDeployStep({ key: "starting", label: "准备中", progress: 8 });
+    setDeployStep({ key: "starting", label: t("准备中"), progress: 8 });
     setCheckUrl("");
 
     try {
@@ -96,18 +98,18 @@ export default function AdminDeployButton() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "发布失败");
+        throw new Error(data.error || t("发布失败"));
       }
 
       const siteUrl = data.checkUrl || "https://grupbeli.com/p/colorbear-art";
       setStatus("progress");
-      setMessage(data.message || "已触发发布，Vercel 正在构建。");
-      setDeployStep(deploySteps[0]);
+      setMessage(data.message || t("已触发发布，Vercel 正在构建。"));
+      setDeployStep({ ...deploySteps[0], label: t(deploySteps[0].label) });
       setDeployProgress(deploySteps[0].progress);
       scheduleProgress(siteUrl);
     } catch (error) {
       setStatus("error");
-      setMessage(error.message || "发布失败");
+      setMessage(error.message || t("发布失败"));
       setDeployProgress(0);
       setDeployStep(null);
     }
@@ -115,7 +117,7 @@ export default function AdminDeployButton() {
 
   const isDisabled = status === "loading" || status === "progress" || isConfigured !== true;
   const buttonText =
-    isConfigured === false ? "未配置发布" : status === "loading" || status === "progress" ? "发布中..." : "发布线上";
+    isConfigured === false ? t("未配置发布") : status === "loading" || status === "progress" ? t("发布中...") : t("发布线上");
 
   return (
     <div className="admin-deploy-control">
@@ -124,14 +126,14 @@ export default function AdminDeployButton() {
         type="button"
         onClick={deploy}
         disabled={isDisabled}
-        title={isConfigured === false ? "缺少 VERCEL_DEPLOY_HOOK_URL" : "发布到线上"}
+        title={isConfigured === false ? t("缺少 VERCEL_DEPLOY_HOOK_URL") : t("发布到线上")}
       >
         {buttonText}
       </button>
       {message ? (
         <div className={`admin-deploy-progress is-${status}`} role="status" aria-live="polite">
           <div className="admin-deploy-progress-head">
-            <strong>{deployStep?.label || (status === "error" ? "发布失败" : "发布状态")}</strong>
+            <strong>{deployStep?.label || (status === "error" ? t("发布失败") : t("发布状态"))}</strong>
             <span>{deployProgress}%</span>
           </div>
           <div className="admin-deploy-track" aria-hidden="true">
@@ -140,7 +142,7 @@ export default function AdminDeployButton() {
           <p>{message}</p>
           {checkUrl ? (
             <a href={checkUrl} target="_blank" rel="noreferrer">
-              打开线上检查
+              {t("打开线上检查")}
             </a>
           ) : null}
         </div>

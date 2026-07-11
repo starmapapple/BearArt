@@ -1,9 +1,11 @@
 import AdminShell from "@/components/AdminShell";
 import ProductManager from "@/components/ProductManager";
+import { getAdminLocale } from "@/lib/adminLocaleServer";
 
-export default function NewProductPage() {
+export default async function NewProductPage() {
+  const locale = await getAdminLocale();
   return (
-    <AdminShell>
+    <AdminShell locale={locale}>
       <ProductManager />
     </AdminShell>
   );

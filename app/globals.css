@@ -266,6 +266,39 @@ textarea {
   gap: 10px;
 }
 
+.admin-language-switch {
+  align-items: center;
+  background: #edf4f1;
+  border: 1px solid #d7e4de;
+  border-radius: 8px;
+  display: inline-flex;
+  padding: 3px;
+}
+
+.admin-language-switch button {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #5f7069;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 28px;
+  padding: 0 9px;
+}
+
+.admin-language-switch button.is-active {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(16, 37, 29, 0.14);
+  color: #087453;
+}
+
+.admin-login-language {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
 .admin-env-pill,
 .admin-preview-link {
   align-items: center;
@@ -4311,6 +4344,7 @@ th {
   }
 
   .admin-topbar-actions {
+    flex-wrap: wrap;
     width: 100%;
   }
 

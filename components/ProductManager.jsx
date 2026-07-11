@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAdminLanguage } from "@/components/AdminLanguageProvider";
 
 const emptyProduct = {
   title: "",
@@ -33,6 +34,7 @@ const emptyProduct = {
 
 export default function ProductManager({ product }) {
   const router = useRouter();
+  const { t } = useAdminLanguage();
   const editing = Boolean(product?.id);
   const [form, setForm] = useState(() => toForm(product || emptyProduct));
   const [saving, setSaving] = useState(false);
@@ -57,12 +59,12 @@ export default function ProductManager({ product }) {
     setSaving(false);
 
     if (!response.ok) {
-      setMessage(payload.error || "保存失败。");
+      setMessage(payload.error || t("保存失败。"));
       return;
     }
 
     setForm(toForm(payload.product));
-    setMessage("已保存。");
+    setMessage(t("已保存。"));
     router.refresh();
     if (!editing) {
       router.push(`/admin/products/${payload.product.id}`);
@@ -88,23 +90,23 @@ export default function ProductManager({ product }) {
     event.target.value = "";
 
     if (!response.ok) {
-      setMessage(payload.error || "视频上传失败。");
+      setMessage(payload.error || t("视频上传失败。"));
       return;
     }
 
     update("videoUrl", payload.url);
-    setMessage("演示视频已上传，保存落地页后生效。");
+    setMessage(t("演示视频已上传，保存落地页后生效。"));
   }
 
   return (
     <div className="grid">
       <div className="page-head">
         <div>
-          <h2>{editing ? "编辑落地页" : "新增落地页"}</h2>
-          <p className="muted">每个落地页只绑定一个商品，不展示其他商品入口。</p>
+          <h2>{editing ? t("编辑落地页") : t("新增落地页")}</h2>
+          <p className="muted">{t("每个落地页只绑定一个商品，不展示其他商品入口。")}</p>
         </div>
         <Link className="btn secondary" href="/admin/products">
-          返回列表
+          {t("返回列表")}
         </Link>
       </div>
 
@@ -112,95 +114,95 @@ export default function ProductManager({ product }) {
         <div className="form-section-heading full">
           <span>01</span>
           <div>
-            <h3>基础信息</h3>
-            <p>控制落地页标题、路径、发布状态和购买按钮。</p>
+            <h3>{t("基础信息")}</h3>
+            <p>{t("控制落地页标题、路径、发布状态和购买按钮。")}</p>
           </div>
         </div>
         <div className="field">
-          <label htmlFor="title">商品标题</label>
+          <label htmlFor="title">{t("商品标题")}</label>
           <input id="title" required value={form.title} onChange={(event) => update("title", event.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="slug">访问路径</label>
+          <label htmlFor="slug">{t("访问路径")}</label>
           <input id="slug" required value={form.slug} onChange={(event) => update("slug", event.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="status">发布状态</label>
+          <label htmlFor="status">{t("发布状态")}</label>
           <select id="status" value={form.status} onChange={(event) => update("status", event.target.value)}>
-            <option value="draft">草稿</option>
-            <option value="published">已发布</option>
-            <option value="archived">已下架</option>
+            <option value="draft">{t("草稿")}</option>
+            <option value="published">{t("已发布")}</option>
+            <option value="archived">{t("已下架")}</option>
           </select>
         </div>
         <div className="field">
-          <label htmlFor="ctaText">购买按钮文案</label>
+          <label htmlFor="ctaText">{t("购买按钮文案")}</label>
           <input id="ctaText" value={form.ctaText} onChange={(event) => update("ctaText", event.target.value)} />
         </div>
         <div className="field full">
-          <label htmlFor="subtitle">副标题</label>
+          <label htmlFor="subtitle">{t("副标题")}</label>
           <textarea id="subtitle" value={form.subtitle} onChange={(event) => update("subtitle", event.target.value)} />
         </div>
         <div className="form-section-heading full">
           <span>02</span>
           <div>
-            <h3>媒体素材</h3>
-            <p>首图、视频、赠品和详情图都可以粘贴素材管理里的 URL。</p>
+            <h3>{t("媒体素材")}</h3>
+            <p>{t("首图、视频、赠品和详情图都可以粘贴素材管理里的 URL。")}</p>
           </div>
         </div>
         <div className="field full">
-          <label htmlFor="heroImage">首图 URL</label>
+          <label htmlFor="heroImage">{t("首图 URL")}</label>
           <input id="heroImage" value={form.heroImage} onChange={(event) => update("heroImage", event.target.value)} />
         </div>
         <div className="field full">
-          <label htmlFor="videoUrl">演示视频 URL</label>
+          <label htmlFor="videoUrl">{t("演示视频 URL")}</label>
           <input
             id="videoUrl"
-            placeholder="上传视频后会自动填入，也可以粘贴外部视频地址"
+            placeholder={t("上传视频后会自动填入，也可以粘贴外部视频地址")}
             value={form.videoUrl}
             onChange={(event) => update("videoUrl", event.target.value)}
           />
         </div>
         <div className="field full">
-          <label htmlFor="videoUpload">上传演示视频</label>
+          <label htmlFor="videoUpload">{t("上传演示视频")}</label>
           <input id="videoUpload" accept="video/*" type="file" onChange={uploadVideo} />
-          <p className="muted">支持常见视频格式，上传后会自动填入上方视频 URL。</p>
-          {uploadingVideo ? <p className="muted">视频上传中...</p> : null}
+          <p className="muted">{t("支持常见视频格式，上传后会自动填入上方视频 URL。")}</p>
+          {uploadingVideo ? <p className="muted">{t("视频上传中...")}</p> : null}
         </div>
         <div className="field full">
-          <label htmlFor="videoPoster">视频封面 URL</label>
+          <label htmlFor="videoPoster">{t("视频封面 URL")}</label>
           <input
             id="videoPoster"
-            placeholder="不填时会使用首图作为视频封面"
+            placeholder={t("不填时会使用首图作为视频封面")}
             value={form.videoPoster}
             onChange={(event) => update("videoPoster", event.target.value)}
           />
         </div>
         <div className="field full">
-          <label htmlFor="giftImages">赠品图片 URL，每行一个</label>
+          <label htmlFor="giftImages">{t("赠品图片 URL，每行一个")}</label>
           <textarea
             id="giftImages"
-            placeholder="用于促销赠品轮播，点击可放大"
+            placeholder={t("用于促销赠品轮播，点击可放大")}
             value={form.giftImages}
             onChange={(event) => update("giftImages", event.target.value)}
           />
         </div>
         <div className="field full">
-          <label htmlFor="gallery">详情图片 URL，每行一个</label>
+          <label htmlFor="gallery">{t("详情图片 URL，每行一个")}</label>
           <textarea id="gallery" value={form.gallery} onChange={(event) => update("gallery", event.target.value)} />
         </div>
         <div className="form-section-heading full">
           <span>03</span>
           <div>
-            <h3>价格与支付</h3>
-            <p>配置售价、划线价、规格、COD 和在线支付方式。</p>
+            <h3>{t("价格与支付")}</h3>
+            <p>{t("配置售价、划线价、规格、COD 和在线支付方式。")}</p>
           </div>
         </div>
         <div className="field">
-          <label htmlFor="price">售价</label>
+          <label htmlFor="price">{t("售价")}</label>
           <input id="price" type="number" value={form.price} onChange={(event) => update("price", event.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="compareAtPrice">划线价</label>
+          <label htmlFor="compareAtPrice">{t("划线价")}</label>
           <input
             id="compareAtPrice"
             type="number"
@@ -209,48 +211,48 @@ export default function ProductManager({ product }) {
           />
         </div>
         <div className="field">
-          <label htmlFor="variants">规格，每行一个</label>
+          <label htmlFor="variants">{t("规格，每行一个")}</label>
           <textarea id="variants" value={form.variants} onChange={(event) => update("variants", event.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor="paymentMethods">支付方式，每行一个</label>
+          <label htmlFor="paymentMethods">{t("支付方式，每行一个")}</label>
           <textarea id="paymentMethods" value={form.paymentMethods} onChange={(event) => update("paymentMethods", event.target.value)} />
         </div>
         <label className="field">
-          <span>是否开启 COD</span>
+          <span>{t("是否开启 COD")}</span>
           <select value={form.codEnabled ? "yes" : "no"} onChange={(event) => update("codEnabled", event.target.value === "yes")}>
-            <option value="yes">开启</option>
-            <option value="no">关闭</option>
+            <option value="yes">{t("开启")}</option>
+            <option value="no">{t("关闭")}</option>
           </select>
         </label>
         <div className="form-section-heading full">
           <span>04</span>
           <div>
-            <h3>页面内容</h3>
-            <p>卖点、模块、评价和 FAQ 会按当前模板或自由版式渲染。</p>
+            <h3>{t("页面内容")}</h3>
+            <p>{t("卖点、模块、评价和 FAQ 会按当前模板或自由版式渲染。")}</p>
           </div>
         </div>
         <div className="field">
-          <label htmlFor="benefits">卖点，每行一个</label>
+          <label htmlFor="benefits">{t("卖点，每行一个")}</label>
           <textarea id="benefits" value={form.benefits} onChange={(event) => update("benefits", event.target.value)} />
         </div>
         <div className="field full">
-          <label htmlFor="sections">内容模块，每行格式：标题 | 正文</label>
+          <label htmlFor="sections">{t("内容模块，每行格式：标题 | 正文")}</label>
           <textarea id="sections" value={form.sections} onChange={(event) => update("sections", event.target.value)} />
         </div>
         <div className="field full">
-          <label htmlFor="reviews">用户评价，每行格式：姓名 | 星级 | 内容 | 头像URL | 评论图URL(逗号分隔)</label>
+          <label htmlFor="reviews">{t("用户评价，每行格式：姓名 | 星级 | 内容 | 头像URL | 评论图URL(逗号分隔)")}</label>
           <textarea id="reviews" value={form.reviews} onChange={(event) => update("reviews", event.target.value)} />
         </div>
         <div className="field full">
-          <label htmlFor="faqs">FAQ，每行格式：问题 | 答案</label>
+          <label htmlFor="faqs">{t("FAQ，每行格式：问题 | 答案")}</label>
           <textarea id="faqs" value={form.faqs} onChange={(event) => update("faqs", event.target.value)} />
         </div>
         <div className="form-section-heading full">
           <span>05</span>
           <div>
-            <h3>追踪代码</h3>
-            <p>广告平台 Pixel 和转化回传相关配置。</p>
+            <h3>{t("追踪代码")}</h3>
+            <p>{t("广告平台 Pixel 和转化回传相关配置。")}</p>
           </div>
         </div>
         <div className="field">
@@ -268,7 +270,7 @@ export default function ProductManager({ product }) {
         <div className="field full">
           {message ? <p className="muted">{message}</p> : null}
           <button className="btn" disabled={saving} type="submit">
-            {saving ? "保存中..." : "保存落地页"}
+            {saving ? t("保存中...") : t("保存落地页")}
           </button>
         </div>
       </form>

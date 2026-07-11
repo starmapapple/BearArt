@@ -1,10 +1,14 @@
 import AdminShell from "@/components/AdminShell";
 import { filterOrders, formatIdr, getOrders } from "@/lib/store";
 import { statusLabel } from "@/lib/adminLabels";
-import { PAYMENT_METHOD_LABELS } from "@/lib/paymentMethods";
+import { PAYMENT_METHOD_LABELS, paymentMethodLabel } from "@/lib/paymentMethods";
+import { getAdminLocale } from "@/lib/adminLocaleServer";
+import { adminDateLocale, translateAdmin } from "@/lib/adminI18n";
 
 export default async function OrdersPage({ searchParams }) {
   const query = await searchParams;
+  const locale = await getAdminLocale();
+  const t = (text) => translateAdmin(locale, text);
   const allOrders = await getOrders();
   const filters = {
     status: query?.status || "all",
@@ -21,44 +25,44 @@ export default async function OrdersPage({ searchParams }) {
   const returnTo = `/admin/orders?${new URLSearchParams(compactFilters(filters)).toString()}`;
 
   return (
-    <AdminShell>
+    <AdminShell locale={locale}>
       <div className="page-head">
         <div>
-          <h2>订单管理</h2>
-          <p className="muted">导出订单给仓库或客服，先用人工方式处理发货和 COD 确认。</p>
+          <h2>{t("订单管理")}</h2>
+          <p className="muted">{t("导出订单给仓库或客服，先用人工方式处理发货和 COD 确认。")}</p>
         </div>
         <a className="btn" href={exportHref}>
-          导出 CSV
+          {t("导出 CSV")}
         </a>
       </div>
 
       <form className="orders-filter admin-filter-panel">
         <label>
-          状态
+          {t("状态")}
           <select name="status" defaultValue={filters.status}>
-            <option value="all">全部状态</option>
+            <option value="all">{t("全部状态")}</option>
             {["cod_pending", "cod_confirmed", "awaiting_payment", "paid", "fulfilled", "delivered", "cancelled", "expired"].map((status) => (
               <option value={status} key={status}>
-                {statusLabel(status)}
+                {statusLabel(status, locale)}
               </option>
             ))}
           </select>
         </label>
         <label>
-          支付
+          {t("支付")}
           <select name="paymentMethod" defaultValue={filters.paymentMethod}>
-            <option value="all">全部支付</option>
-            {Object.entries(PAYMENT_METHOD_LABELS).map(([value, label]) => (
+            <option value="all">{t("全部支付")}</option>
+            {Object.keys(PAYMENT_METHOD_LABELS).map((value) => (
               <option key={value} value={value}>
-                {label}
+                {paymentMethodLabel(value, locale)}
               </option>
             ))}
           </select>
         </label>
         <label>
-          落地页
+          {t("落地页")}
           <select name="productSlug" defaultValue={filters.productSlug}>
-            <option value="all">全部落地页</option>
+            <option value="all">{t("全部落地页")}</option>
             {products.map((slug) => (
               <option key={slug} value={slug}>
                 /p/{slug}
@@ -67,9 +71,9 @@ export default async function OrdersPage({ searchParams }) {
           </select>
         </label>
         <label>
-          省份
+          {t("省份")}
           <select name="province" defaultValue={filters.province}>
-            <option value="all">全部省份</option>
+            <option value="all">{t("全部省份")}</option>
             {provinces.map((province) => (
               <option key={province} value={province}>
                 {province}
@@ -78,15 +82,15 @@ export default async function OrdersPage({ searchParams }) {
           </select>
         </label>
         <label>
-          开始
+          {t("开始")}
           <input name="from" type="date" defaultValue={filters.from} />
         </label>
         <label>
-          结束
+          {t("结束")}
           <input name="to" type="date" defaultValue={filters.to} />
         </label>
         <button className="btn" type="submit">
-          筛选
+          {t("筛选")}
         </button>
       </form>
 
@@ -95,14 +99,7 @@ export default async function OrdersPage({ searchParams }) {
           <table className="orders-table">
             <thead>
               <tr>
-                <th>订单</th>
-                <th>状态</th>
-                <th>商品</th>
-                <th>客户</th>
-                <th>支付</th>
-                <th>金额</th>
-                <th>创建时间</th>
-                <th>操作</th>
+                <th>{t("订单")}</th><th>{t("状态")}</th><th>{t("商品")}</th><th>{t("客户")}</th><th>{t("支付")}</th><th>{t("金额")}</th><th>{t("创建时间")}</th><th>{t("操作")}</th>
               </tr>
             </thead>
             <tbody>
@@ -112,7 +109,7 @@ export default async function OrdersPage({ searchParams }) {
                     <code className="order-id">{order.id}</code>
                   </td>
                   <td>
-                    <span className={`pill ${order.status}`}>{statusLabel(order.status)}</span>
+                    <span className={`pill ${order.status}`}>{statusLabel(order.status, locale)}</span>
                   </td>
                   <td>
                     <div className="order-product-cell">
@@ -131,36 +128,36 @@ export default async function OrdersPage({ searchParams }) {
                       </span>
                       <small>{order.customer?.address}</small>
                     </div>
-                    {order.customer?.postalCode ? <div className="muted">邮编：{order.customer.postalCode}</div> : null}
+                    {order.customer?.postalCode ? <div className="muted">{t("邮编")}：{order.customer.postalCode}</div> : null}
                     {order.location?.lat && order.location?.lon ? (
                       <div className="muted">
-                        定位：{order.location.lat.toFixed(5)}, {order.location.lon.toFixed(5)}
+                        {t("定位")}：{order.location.lat.toFixed(5)}, {order.location.lon.toFixed(5)}
                       </div>
                     ) : null}
                   </td>
-                  <td>{PAYMENT_METHOD_LABELS[order.paymentMethod] || order.paymentMethod}</td>
+                  <td>{paymentMethodLabel(order.paymentMethod, locale)}</td>
                   <td>
                     <strong className="order-total">{formatIdr(order.total)}</strong>
                   </td>
-                  <td>{new Date(order.createdAt).toLocaleString("id-ID")}</td>
+                  <td>{new Date(order.createdAt).toLocaleString(adminDateLocale(locale))}</td>
                   <td>
-                    <OrderActions order={order} returnTo={returnTo} />
+                    <OrderActions order={order} returnTo={returnTo} locale={locale} t={t} />
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         ) : (
-          <div className="empty-state">暂无订单。</div>
+          <div className="empty-state">{t("暂无订单。")}</div>
         )}
       </div>
     </AdminShell>
   );
 }
 
-function OrderActions({ order, returnTo }) {
-  const actions = availableActions(order);
-  if (!actions.length) return <span className="muted">暂无操作</span>;
+function OrderActions({ order, returnTo, locale, t }) {
+  const actions = availableActions(order, locale);
+  if (!actions.length) return <span className="muted">{t("暂无操作")}</span>;
 
   return (
     <div className="order-actions">
@@ -178,13 +175,14 @@ function OrderActions({ order, returnTo }) {
   );
 }
 
-function availableActions(order) {
+function availableActions(order, locale) {
   const actions = [];
-  if (order.status === "cod_pending") actions.push({ status: "cod_confirmed", label: "确认COD" });
-  if (order.status === "awaiting_payment") actions.push({ status: "paid", label: "标记已支付" });
-  if (["cod_confirmed", "paid"].includes(order.status)) actions.push({ status: "fulfilled", label: "标记发货" });
-  if (order.status === "fulfilled") actions.push({ status: "delivered", label: "标记签收" });
-  if (!["cancelled", "expired", "delivered"].includes(order.status)) actions.push({ status: "cancelled", label: "取消", danger: true });
+  const label = (zh, id) => locale === "id" ? id : zh;
+  if (order.status === "cod_pending") actions.push({ status: "cod_confirmed", label: label("确认COD", "Konfirmasi COD") });
+  if (order.status === "awaiting_payment") actions.push({ status: "paid", label: label("标记已支付", "Tandai Dibayar") });
+  if (["cod_confirmed", "paid"].includes(order.status)) actions.push({ status: "fulfilled", label: label("标记发货", "Tandai Dikirim") });
+  if (order.status === "fulfilled") actions.push({ status: "delivered", label: label("标记签收", "Tandai Diterima") });
+  if (!["cancelled", "expired", "delivered"].includes(order.status)) actions.push({ status: "cancelled", label: label("取消", "Batalkan"), danger: true });
   return actions;
 }
 

@@ -2,9 +2,11 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminLanguage } from "@/components/AdminLanguageProvider";
 
 export default function AssetManager({ assets }) {
   const router = useRouter();
+  const { locale, t } = useAdminLanguage();
   const [filter, setFilter] = useState("all");
   const [viewMode, setViewMode] = useState("list");
   const [sortMode, setSortMode] = useState("default");
@@ -70,7 +72,7 @@ export default function AssetManager({ assets }) {
   const allDeletableSelected = deletableAssets.length > 0 && deletableAssets.every((asset) => selectedSet.has(asset.url));
   async function copyUrl(url) {
     await navigator.clipboard.writeText(url);
-    setMessage("已复制素材 URL。");
+    setMessage(t("已复制素材 URL。"));
   }
 
   async function uploadNewAsset(event) {
@@ -94,7 +96,7 @@ export default function AssetManager({ assets }) {
     event.target.value = "";
 
     if (!response.ok) {
-      setMessage(payload.error || "上传失败。");
+      setMessage(payload.error || t("上传失败。"));
       return;
     }
 
@@ -123,7 +125,7 @@ export default function AssetManager({ assets }) {
     event.target.value = "";
 
     if (!response.ok) {
-      setMessage(payload.error || "替换失败。");
+      setMessage(payload.error || t("替换失败。"));
       return;
     }
 
@@ -165,7 +167,7 @@ export default function AssetManager({ assets }) {
   async function batchDeleteAssets() {
     const targets = selectedVisibleAssets;
     if (!targets.length) {
-      setMessage("当前没有选中可删除的未应用素材。");
+      setMessage(t("当前没有选中可删除的未应用素材。"));
       return;
     }
 
@@ -217,7 +219,7 @@ export default function AssetManager({ assets }) {
     setBusyAsset("");
 
     if (!response.ok) {
-      setMessage(payload.error || "应用素材失败。");
+      setMessage(payload.error || t("应用素材失败。"));
       return;
     }
 
@@ -273,14 +275,14 @@ export default function AssetManager({ assets }) {
       const payload = await response.json();
 
       if (!response.ok) {
-        setMessage(payload.error || "压缩上传失败。");
+        setMessage(payload.error || t("压缩上传失败。"));
         return;
       }
 
       setMessage("");
       startTransition(() => router.refresh());
     } catch (error) {
-      setMessage(error.message || "压缩失败。");
+      setMessage(error.message || t("压缩失败。"));
     } finally {
       setCompressingAsset("");
     }
@@ -290,55 +292,55 @@ export default function AssetManager({ assets }) {
     <div className="grid">
       <div className="page-head">
         <div>
-          <h2>素材管理</h2>
-          <p className="muted">管理落地页使用的图片和视频素材，查看大小、尺寸、路径，并快速替换。</p>
+          <h2>{t("素材管理")}</h2>
+          <p className="muted">{t("管理落地页使用的图片和视频素材，查看大小、尺寸、路径，并快速替换。")}</p>
         </div>
       </div>
 
       <section className="stats-grid assets-stats">
-        <Stat label="素材总数" value={stats.total} />
-        <Stat label="图片" value={stats.images} />
-        <Stat label="视频" value={stats.videos} />
-        <SizeStat optimized={stats.optimizedSizeText} original={stats.originalSizeText} savings={stats.savingsRate} />
+        <Stat label={t("素材总数")} value={stats.total} />
+        <Stat label={t("图片")} value={stats.images} />
+        <Stat label={t("视频")} value={stats.videos} />
+        <SizeStat optimized={stats.optimizedSizeText} original={stats.originalSizeText} savings={stats.savingsRate} t={t} />
       </section>
 
       <section className="card asset-upload-panel">
         <div>
-          <h3>上传新素材</h3>
-          <p className="muted">上传后会生成新的 URL。要让落地页使用它，可以复制 URL 到落地页编辑页对应字段。</p>
+          <h3>{t("上传新素材")}</h3>
+          <p className="muted">{t("上传后会生成新的 URL。要让落地页使用它，可以复制 URL 到落地页编辑页对应字段。")}</p>
         </div>
         <label className="field">
-          <span>保存目录</span>
-          <input value={folder} onChange={(event) => setFolder(event.target.value)} placeholder="例如 colorbear-art" />
+          <span>{t("保存目录")}</span>
+          <input value={folder} onChange={(event) => setFolder(event.target.value)} placeholder={t("例如 colorbear-art")} />
         </label>
         <label className="btn secondary asset-file-button">
-          {uploading ? "上传中..." : "选择文件上传"}
+          {uploading ? t("上传中...") : t("选择文件上传")}
           <input accept="image/*,video/*" disabled={uploading} type="file" onChange={uploadNewAsset} />
         </label>
       </section>
 
       <section className="card asset-note">
-        <strong>替换说明</strong>
+        <strong>{t("替换说明")}</strong>
         <p className="muted">
-          “替换素材”会覆盖同一个 URL，页面不用重新改路径。Vercel 正式环境不适合长期直接写入文件；正式放量后建议切到 Bunny/R2/CDN 素材库。
+          {t("“替换素材”会覆盖同一个 URL，页面不用重新改路径。Vercel 正式环境不适合长期直接写入文件；正式放量后建议切到 Bunny/R2/CDN 素材库。")}
         </p>
       </section>
 
-      <section className="card asset-toolbar asset-filter-console" aria-label="素材筛选工具">
+      <section className="card asset-toolbar asset-filter-console" aria-label={t("素材筛选工具")}>
         <label className="asset-search-box">
-          <span className="asset-control-label">搜索素材</span>
+          <span className="asset-control-label">{t("搜索素材")}</span>
           <span className="asset-search-input">
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="文件名、目录或 URL" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("文件名、目录或 URL")} />
             {query ? (
-              <button type="button" onClick={() => setQuery("")} aria-label="清空搜索">
-                清除
+              <button type="button" onClick={() => setQuery("")} aria-label={t("清空搜索")}>
+                {t("清除")}
               </button>
             ) : null}
           </span>
         </label>
 
         <div className="asset-control-strip">
-          <ControlGroup label="类型">
+          <ControlGroup label={t("类型")}>
             {assetTypeFilters.map((item) => (
               <button
                 aria-pressed={filter === item.value}
@@ -347,11 +349,11 @@ export default function AssetManager({ assets }) {
                 type="button"
                 onClick={() => setFilter(item.value)}
               >
-                {item.label}
+                {t(item.label)}
               </button>
             ))}
           </ControlGroup>
-          <ControlGroup label="排序">
+          <ControlGroup label={t("排序")}>
             {assetSortOptions.map((item) => (
               <button
                 aria-pressed={sortMode === item.value}
@@ -360,11 +362,11 @@ export default function AssetManager({ assets }) {
                 type="button"
                 onClick={() => setSortMode(item.value)}
               >
-                {item.label}
+                {t(item.label)}
               </button>
             ))}
           </ControlGroup>
-          <ControlGroup label="视图">
+          <ControlGroup label={t("视图")}>
             {assetViewOptions.map((item) => (
               <button
                 aria-pressed={viewMode === item.value}
@@ -373,7 +375,7 @@ export default function AssetManager({ assets }) {
                 type="button"
                 onClick={() => setViewMode(item.value)}
               >
-                {item.label}
+                {t(item.label)}
               </button>
             ))}
           </ControlGroup>
@@ -381,7 +383,7 @@ export default function AssetManager({ assets }) {
       </section>
 
       {message ? <p className="asset-message">{message}</p> : null}
-      {isPending ? <p className="muted">正在刷新素材列表...</p> : null}
+      {isPending ? <p className="muted">{t("正在刷新素材列表...")}</p> : null}
 
       <section className="card asset-bulk-bar">
         <label>
@@ -391,13 +393,13 @@ export default function AssetManager({ assets }) {
             type="checkbox"
             onChange={toggleAllDeletable}
           />
-          <span>选择当前结果中的未应用素材</span>
+          <span>{t("选择当前结果中的未应用素材")}</span>
         </label>
         <p className="muted">
-          当前已选 {selectedVisibleAssets.length} 个，可删除 {deletableAssets.length} 个
+          {locale === "id" ? `${selectedVisibleAssets.length} dipilih, ${deletableAssets.length} dapat dihapus` : `当前已选 ${selectedVisibleAssets.length} 个，可删除 ${deletableAssets.length} 个`}
         </p>
         <button className="btn warn small" disabled={!selectedVisibleAssets.length || busyAsset === "batch-delete"} type="button" onClick={batchDeleteAssets}>
-          {busyAsset === "batch-delete" ? "批量删除中..." : "批量删除"}
+          {busyAsset === "batch-delete" ? t("批量删除中...") : t("批量删除")}
         </button>
       </section>
 
@@ -405,10 +407,7 @@ export default function AssetManager({ assets }) {
         {viewMode === "list" ? (
           <div className="asset-list-header" aria-hidden="true">
             <span></span>
-            <span>预览</span>
-            <span>素材信息</span>
-            <span>应用与规格</span>
-            <span>操作</span>
+            <span>{t("预览")}</span><span>{t("素材信息")}</span><span>{t("应用与规格")}</span><span>{t("操作")}</span>
           </div>
         ) : null}
         {filteredAssets.map((asset) => {
@@ -418,7 +417,7 @@ export default function AssetManager({ assets }) {
           <article className={`card asset-card ${asset.referenceCount ? "is-referenced" : "is-free"}`} key={asset.url}>
             <div className="asset-select-cell">
               <input
-                aria-label={`选择 ${asset.name}`}
+                aria-label={`${t("选择")} ${asset.name}`}
                 checked={selectedSet.has(asset.url)}
                 disabled={Boolean(asset.referenceCount)}
                 type="checkbox"
@@ -431,44 +430,44 @@ export default function AssetManager({ assets }) {
               ) : (
                 <video muted playsInline preload="metadata" src={asset.url} />
               )}
-              <span>点击预览</span>
+              <span>{t("点击预览")}</span>
             </button>
 
             <div className="asset-card-body">
               <div className="asset-title-block">
                 <div className="asset-badges">
-                  <span className={`pill ${asset.type === "image" ? "published" : "draft"}`}>{asset.type === "image" ? "图片" : "视频"}</span>
-                  {isApplied ? <span className="pill asset-applied-pill">已应用</span> : <span className="pill asset-unapplied-pill">未应用</span>}
+                  <span className={`pill ${asset.type === "image" ? "published" : "draft"}`}>{asset.type === "image" ? t("图片") : t("视频")}</span>
+                  {isApplied ? <span className="pill asset-applied-pill">{t("已应用")}</span> : <span className="pill asset-unapplied-pill">{t("未应用")}</span>}
                 </div>
                 <h3 title={displayAssetName(asset)}>{displayAssetName(asset)}</h3>
                 <div className="asset-path-row">
                   <code title={displayAssetPath(asset)}>{displayAssetPath(asset)}</code>
                   <button type="button" onClick={() => copyUrl(asset.url)}>
-                    复制
+                    {t("复制")}
                   </button>
                 </div>
               </div>
 
               {viewMode === "list" ? (
                 <p className="asset-compact-meta" title={compactAssetSummary(asset)}>
-                  {compactAssetSummary(asset)}
+                  {compactAssetSummary(asset, t)}
                 </p>
               ) : (
                 <dl className="asset-meta">
                   <div>
-                    <dt>大小</dt>
+                    <dt>{t("大小")}</dt>
                     <dd>{asset.sizeText}</dd>
                   </div>
                   <div>
-                    <dt>尺寸</dt>
+                    <dt>{t("尺寸")}</dt>
                     <dd>{asset.dimensionsText}</dd>
                   </div>
                   <div>
-                    <dt>格式</dt>
+                    <dt>{t("格式")}</dt>
                     <dd>{asset.extension}</dd>
                   </div>
                   <div>
-                    <dt>更新</dt>
+                    <dt>{t("更新")}</dt>
                     <dd>{formatAssetDate(asset.updatedAt)}</dd>
                   </div>
                 </dl>
@@ -477,13 +476,13 @@ export default function AssetManager({ assets }) {
               <div className="asset-usage-panel">
                 {asset.referenceCount ? (
                   <p className="asset-references">
-                    <span>应用位置</span>
+                    <span>{t("应用位置")}</span>
                     {asset.references.join("、")}
                   </p>
                 ) : (
                   <p className="asset-references is-free">
-                    <span>状态</span>
-                    未应用，可删除
+                    <span>{t("状态")}</span>
+                    {t("未应用，可删除")}
                   </p>
                 )}
 
@@ -491,7 +490,7 @@ export default function AssetManager({ assets }) {
 
               {canCompress(asset) ? (
                 <div className="asset-compress">
-                  <span>生成 WebP</span>
+                  <span>{t("生成 WebP")}</span>
                   <div>
                     {qualityPresets.map((preset) => (
                       <button
@@ -502,7 +501,7 @@ export default function AssetManager({ assets }) {
                         title={`压缩为${preset.label} WebP`}
                         onClick={() => compressAsset(asset, preset)}
                       >
-                        {compressingAsset === `${asset.url}-${preset.id}` ? "..." : preset.label}
+                        {compressingAsset === `${asset.url}-${preset.id}` ? "..." : t(preset.label)}
                       </button>
                     ))}
                   </div>
@@ -516,11 +515,11 @@ export default function AssetManager({ assets }) {
               <div className="asset-actions">
                 {isApplied ? (
                   <>
-                    <button className="btn apply small compact is-applied" disabled type="button" title="当前页面正在使用这个素材">
-                      已应用
+                    <button className="btn apply small compact is-applied" disabled type="button" title={t("当前页面正在使用这个素材")}>
+                      {t("已应用")}
                     </button>
-                    <label className="btn small compact asset-file-button" title="重新上传本地素材覆盖当前 URL">
-                      {busyAsset === asset.url ? "..." : "替换"}
+                    <label className="btn small compact asset-file-button" title={t("重新上传本地素材覆盖当前 URL")}>
+                      {busyAsset === asset.url ? "..." : t("替换")}
                       <input
                         accept={asset.type === "image" ? "image/*" : "video/*"}
                         disabled={busyAsset === asset.url}
@@ -535,14 +534,14 @@ export default function AssetManager({ assets }) {
                     className="btn apply small compact"
                     disabled={!canApply || busyAsset === `apply-${asset.url}`}
                     type="button"
-                    title="切换落地页使用这个素材"
+                    title={t("切换落地页使用这个素材")}
                     onClick={() => applyAssetToReferences(asset)}
                   >
-                    {busyAsset === `apply-${asset.url}` ? "..." : "应用"}
+                    {busyAsset === `apply-${asset.url}` ? "..." : t("应用")}
                   </button>
                   {!asset.referenceCount ? (
-                    <button className="btn warn small compact" disabled={busyAsset === asset.url} type="button" title="删除素材" onClick={() => deleteAsset(asset)}>
-                      {busyAsset === asset.url ? "..." : "删除"}
+                    <button className="btn warn small compact" disabled={busyAsset === asset.url} type="button" title={t("删除素材")} onClick={() => deleteAsset(asset)}>
+                      {busyAsset === asset.url ? "..." : t("删除")}
                     </button>
                   ) : null}
                   </>
@@ -554,13 +553,13 @@ export default function AssetManager({ assets }) {
         })}
       </section>
 
-      {!filteredAssets.length ? <p className="muted">没有找到符合条件的素材。</p> : null}
+      {!filteredAssets.length ? <p className="muted">{t("没有找到符合条件的素材。")}</p> : null}
 
       {previewAsset ? (
-        <div className="asset-preview-modal" role="dialog" aria-modal="true" aria-label="素材预览" onClick={() => setPreviewAsset(null)}>
+        <div className="asset-preview-modal" role="dialog" aria-modal="true" aria-label={t("素材预览")} onClick={() => setPreviewAsset(null)}>
           <div className="asset-preview-modal-panel" onClick={(event) => event.stopPropagation()}>
             <button className="asset-preview-close" type="button" onClick={() => setPreviewAsset(null)}>
-              关闭
+              {t("关闭")}
             </button>
             {previewAsset.type === "image" ? (
               <img alt={previewAsset.name} src={`${previewAsset.url}?v=${encodeURIComponent(previewAsset.updatedAt)}`} />
@@ -607,23 +606,23 @@ function Stat({ label, value }) {
   );
 }
 
-function SizeStat({ optimized, original, savings }) {
+function SizeStat({ optimized, original, savings, t }) {
   return (
     <div className="card asset-size-stat">
-      <p className="muted">素材优化</p>
+      <p className="muted">{t("素材优化")}</p>
       <div className="asset-size-compare">
         <div>
-          <span>原素材</span>
+          <span>{t("原素材")}</span>
           <strong>{original}</strong>
         </div>
         <div>
-          <span>优化后</span>
+          <span>{t("优化后")}</span>
           <strong>{optimized}</strong>
         </div>
       </div>
       <div className="asset-size-saving">
-        <span>已应用版本对比原图</span>
-        <b>节省 {savings}%</b>
+        <span>{t("已应用版本对比原图")}</span>
+        <b>{t("节省")} {savings}%</b>
       </div>
     </div>
   );
@@ -676,9 +675,9 @@ function compactAssetFacts(asset) {
   return [formatCompactBytes(asset.size), formatCompactDimensions(asset), asset.extension.toLowerCase(), formatAssetDate(asset.updatedAt)];
 }
 
-function compactAssetSummary(asset) {
+function compactAssetSummary(asset, t = (value) => value) {
   const facts = compactAssetFacts(asset).join(" / ");
-  return `${assetVariantLabel(asset)} ${facts}`;
+  return `${t(assetVariantLabel(asset))} ${facts}`;
 }
 
 function getCompressionLabel(asset) {

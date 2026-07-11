@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AdminDeployButton from "@/components/AdminDeployButton";
+import AdminLanguageSwitcher from "@/components/AdminLanguageSwitcher";
+import { AdminLanguageProvider, useAdminLanguage } from "@/components/AdminLanguageProvider";
 
 const navSections = [
   {
@@ -26,8 +28,17 @@ const navSections = [
 
 const navItems = navSections.flatMap((section) => section.items);
 
-export default function AdminShell({ children }) {
+export default function AdminShell({ children, locale = "zh" }) {
+  return (
+    <AdminLanguageProvider locale={locale}>
+      <AdminShellContent>{children}</AdminShellContent>
+    </AdminLanguageProvider>
+  );
+}
+
+function AdminShellContent({ children }) {
   const pathname = usePathname();
+  const { locale, t } = useAdminLanguage();
 
   const isActive = (item) => {
     if (item.exact) {
@@ -42,7 +53,7 @@ export default function AdminShell({ children }) {
   return (
     <div className="admin-layout">
       <a className="skip-link" href="#admin-content">
-        跳到主要内容
+        {t("跳到主要内容")}
       </a>
       <aside className="sidebar">
         <div className="sidebar-brand">
@@ -51,13 +62,13 @@ export default function AdminShell({ children }) {
           </span>
           <div>
             <h1>Bear Art Admin</h1>
-            <p>印尼投放运营后台</p>
+            <p>{t("印尼投放运营后台")}</p>
           </div>
         </div>
-        <nav className="nav-list" aria-label="后台导航">
+        <nav className="nav-list" aria-label={t("后台导航")}>
           {navSections.map((section) => (
             <div className="nav-section" key={section.label}>
-              <p className="sidebar-section-label">{section.label}</p>
+              <p className="sidebar-section-label">{t(section.label)}</p>
               {section.items.map((item) => {
                 const active = isActive(item);
 
@@ -69,7 +80,7 @@ export default function AdminShell({ children }) {
                     key={item.href}
                   >
                     <NavIcon name={item.icon} />
-                    <span>{item.label}</span>
+                    <span>{t(item.label)}</span>
                   </Link>
                 );
               })}
@@ -79,7 +90,7 @@ export default function AdminShell({ children }) {
         <form action="/api/admin/logout" method="post" className="admin-logout-form">
           <button className="nav-tab logout-tab" type="submit">
             <NavIcon name="logout" />
-            <span>退出登录</span>
+            <span>{t("退出登录")}</span>
           </button>
         </form>
       </aside>
@@ -87,13 +98,14 @@ export default function AdminShell({ children }) {
         <header className="admin-topbar">
           <div className="admin-topbar-title">
             <span>Bear Art Admin</span>
-            <strong>{activeItem.label}</strong>
+            <strong>{t(activeItem.label)}</strong>
           </div>
           <div className="admin-topbar-actions">
+            <AdminLanguageSwitcher locale={locale} />
             <AdminDeployButton />
             <Link className="admin-preview-link" href="/p/colorbear-art" target="_blank">
               <NavIcon name="external" />
-              <span>打开前台</span>
+              <span>{t("打开前台")}</span>
             </Link>
           </div>
         </header>
