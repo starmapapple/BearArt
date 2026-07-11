@@ -4,6 +4,7 @@ import CheckoutForm from "@/components/CheckoutForm";
 import PixelTrackers from "@/components/PixelTrackers";
 import PublicHeader from "@/components/PublicHeader";
 import { assetList, assetUrl } from "@/lib/assets";
+import { getEffectivePaymentMethods } from "@/lib/paymentMethods";
 import { formatIdr, getProductBySlug } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -19,8 +20,13 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params, searchParams }) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
-  const product = await getProductBySlug(slug);
-  if (!product) notFound();
+  const storedProduct = await getProductBySlug(slug);
+  if (!storedProduct) notFound();
+
+  const product = {
+    ...storedProduct,
+    paymentMethods: getEffectivePaymentMethods(storedProduct.paymentMethods, process.env.PAYMENT_PROVIDER)
+  };
 
   const canPreview = query?.preview === product.previewToken;
   if (product.status !== "published" && !canPreview) notFound();
